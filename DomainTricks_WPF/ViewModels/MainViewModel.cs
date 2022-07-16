@@ -26,7 +26,8 @@ namespace DomainTricks_WPF.ViewModels
        async void TestMMI(MMIService mmiService)
         {
             string computerName = "RELIC-PC";
-           await mmiService.GetMMI(computerName);
+            AuthenticationModel auth = new AuthenticationModel("tuttistudios.com", "jennifer", "password");
+           await mmiService.GetMMI(computerName,auth);
             if (mmiService.IsError == true)
             {
                 Log.Information($"{computerName} returned error: {mmiService.ErrorMessage}");

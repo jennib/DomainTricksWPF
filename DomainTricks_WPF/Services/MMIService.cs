@@ -25,7 +25,7 @@ public class MMIService
         Log.Logger = logger;
     }
 
-    public async Task GetMMI(string? computerName)
+    public async Task GetMMI(string? computerName,AuthenticationModel authentication)
     {
         // 
         if (computerName is null)
@@ -36,19 +36,24 @@ public class MMIService
         }
 
         // Authentication
-        string domain = "tuttistudios.com";
-        string username = "jennifer";
-        string plaintextpassword = "password";
-        SecureString securepassword = new();
-        foreach (char c in plaintextpassword)
-        {
-            securepassword.AppendChar(c);
-        }
-        // create Credentials
-        CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, domain, username, securepassword);
-        // create SessionOptions using Credentials
+        //string domain = "tuttistudios.com";
+        //string username = "jennifer";
+        //string plaintextpassword = "password";
+        //SecureString securepassword = new();
+        //foreach (char c in plaintextpassword)
+        //{
+        //    securepassword.AppendChar(c);
+        //}
+
         WSManSessionOptions SessionOptions = new();
-        SessionOptions.AddDestinationCredentials(Credentials);
+
+        // Use UserName and Password if the exits
+        if (authentication.UserName  is not null || authentication.Password is not null)
+        {
+            // create Credentials
+            CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, authentication.DomainName, authentication.UserName, authentication.SecurePassword);
+            SessionOptions.AddDestinationCredentials(Credentials);
+        }
         SessionOptions.Timeout = new TimeSpan(0, 0, 10);
 
         string nameSpace = @"root\cimv2";
