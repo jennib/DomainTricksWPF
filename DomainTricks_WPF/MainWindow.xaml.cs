@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +22,17 @@ namespace DomainTricks_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(object dataContext)
         {
+            this.DataContext = dataContext;
             InitializeComponent();
+        }
+
+    
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+           
+            Debug.WriteLine("Main Window Loaded.");
         }
     }
 }

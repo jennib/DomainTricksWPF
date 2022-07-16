@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Navigation;
 
 namespace DomainTricks_WPF
 {
@@ -31,15 +32,17 @@ namespace DomainTricks_WPF
             Log.Information("============= Starting App. =============");
 
             // Setup and Show the Main Window
-            appWindow = new();
-            appWindow.DataContext = new MainViewModel(Logger);
+            appWindow = new(new MainViewModel(Logger));
+            //appWindow.DataContext = new MainViewModel(Logger);
             appWindow.Show();
         }
+
+       
 
         protected override  void OnExit(System.Windows.ExitEventArgs e)
         {
             Log.Information("");
-            Log.Information($"Exiting App.");
+            Log.Information($"App exiting.");
             base.OnExit(e);
         }
     }
