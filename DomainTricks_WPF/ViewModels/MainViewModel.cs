@@ -1,5 +1,6 @@
 ﻿using DomainTricks_WPF.Models;
 using DomainTricks_WPF.Services;
+using Microsoft.Management.Infrastructure;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,21 @@ namespace DomainTricks_WPF.ViewModels
             TestMMI(mmiService);
         }
 
-
+        
         // Test the Microsoft Management Infrastructure call
        async void TestMMI(MMIService mmiService)
         {
-            await mmiService.GetMMI("RELIC");
+            string computerName = "RELIC-PC";
+           await mmiService.GetMMI(computerName);
+            if (mmiService.IsError == true)
+            {
+                Log.Information($"{computerName} returned error: {mmiService.ErrorMessage}");
+            }
+            else
+            {
+                Log.Information($"{computerName} returned: {mmiService.Instances.Count()}");
+            }
+           
         }
     }
 }

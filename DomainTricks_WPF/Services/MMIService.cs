@@ -15,16 +15,23 @@ namespace DomainTricks_WPF.Services;
 
 public class MMIService
 {
+    public bool IsError = false;
 
+    public string? ErrorMessage = string.Empty;
+
+    public List<CimInstance> Instances = new();
     public MMIService(ILogger logger)
     {
         Log.Logger = logger;
     }
 
-    public async Task GetMMI(string computerName)
+    public async Task GetMMI(string? computerName)
     {
+        // 
         if (computerName is null)
         {
+            IsError = true;
+            ErrorMessage = $"{nameof(GetMMI)} requires a computer name";
             return;
         }
 
@@ -58,8 +65,15 @@ public class MMIService
         {
             await Task.Delay(200);
         }
+
+        IsError = instanceWatcher.IsError;
+        ErrorMessage = instanceWatcher.ErrorMessage;
+        Instances = instanceWatcher.Instances.ToList();
+
         if (instanceWatcher.IsError)
         {
+            IsError = true;
+            ErrorMessage = instanceWatcher.ErrorMessage;
             Log.Error("Error: {0}", instanceWatcher.ErrorMessage);
         }
         else
@@ -72,6 +86,7 @@ public class MMIService
                 }
             }
         }
+        return;
     }
 
 }
