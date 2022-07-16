@@ -28,12 +28,19 @@ namespace DomainTricks_WPF
                     .CreateLogger();
 
             Logger = Log.Logger;
-            Log.Information("Starting App");
+            Log.Information("============= Starting App. =============");
 
             // Setup and Show the Main Window
             appWindow = new();
             appWindow.DataContext = new MainViewModel(Logger);
             appWindow.Show();
+        }
+
+        protected override  void OnExit(System.Windows.ExitEventArgs e)
+        {
+            Log.Information("");
+            Log.Information($"Exiting App.");
+            base.OnExit(e);
         }
     }
 }

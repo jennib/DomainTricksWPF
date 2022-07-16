@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using DomainTricks_WPF.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace DomainTricks_WPF.ViewModels
         {
             Log.Logger = logger;
             Log.Information("MainViewModel start.");
+
+            ComputerModel computer = new ComputerModel(logger, Guid.NewGuid());
         }
     }
 }
