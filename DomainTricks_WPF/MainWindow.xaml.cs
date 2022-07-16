@@ -21,10 +21,8 @@ namespace DomainTricks_WPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(ILogger logger)
+        public MainWindow()
         {
-            Log.Logger = logger;
-            Log.Information("MainWindow start.");
             InitializeComponent();
         }
     }

@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using DomainTricks_WPF.ViewModels;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -30,8 +31,8 @@ namespace DomainTricks_WPF
             Log.Information("Starting App");
 
             // Setup and Show the Main Window
-            appWindow = new(Logger);
-            
+            appWindow = new();
+            appWindow.DataContext = new MainViewModel(Logger);
             appWindow.Show();
         }
     }
