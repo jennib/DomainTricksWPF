@@ -16,48 +16,71 @@ namespace DomainTricks_WPF.Services;
 
 public class MMIService
 {
+    // Return Properties.
     public bool IsError = false;
 
     public string? ErrorMessage = string.Empty;
 
     public List<CimInstance> Instances = new();
+        
+    // Set Properties.
+    public AuthenticationModel? Authentication { get; set; }
+    public string? ClassName { get; set; }
 
-    public MMIService(ILogger logger)
+    public string[]? PropertiesArray { get; set; }
+
+    // Set in the constructor.
+    public string ComputerName { get; }
+
+    
+    public MMIService(ILogger logger, string computerName)
     {
+        ComputerName = computerName;
         Log.Logger = logger;
     }
 
-    public async Task GetMMI(string? computerName,AuthenticationModel authentication)
+    public async Task Execute()
     {
-        // 
-        if (computerName is null)
+        // Generate the properties string if Peroperties is not null.
+        string? propertiesString;
+        if (PropertiesArray is not null && PropertiesArray?.Length > 0)
+        {
+            propertiesString = string.Join(",", PropertiesArray);
+        }
+        else
+        {
+            propertiesString = "*";
+        }
+
+        // Make sure we have what we need.
+        if (string.IsNullOrEmpty(ComputerName) || string.IsNullOrEmpty(ClassName) || string.IsNullOrEmpty(propertiesString))
         {
             IsError = true;
-            ErrorMessage = $"{nameof(GetMMI)} requires a computer name";
-            return;
+            ErrorMessage = "ComputerName, Class, and Properties are required";
+            Log.Error(ErrorMessage);
+            throw new Exception("ComputerName, Class, and Properties are required"); ;
         }
 
         WSManSessionOptions SessionOptions = new();
 
-        // Use UserName and Password if the exits
-        if (authentication.UserName  is not null || authentication.Password is not null)
+        // Use UserName and Password if the exits.
+        if (Authentication is not null || Authentication?.UserName is not null || Authentication?.Password is not null)
         {
-            // create Credentials
-            CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, authentication.DomainName, authentication.UserName, authentication.SecurePassword);
+            // create Credentials.
+            CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
             SessionOptions.AddDestinationCredentials(Credentials);
         }
         SessionOptions.Timeout = new TimeSpan(0, 0, 10);
 
         string nameSpace = @"root\cimv2";
-        string className = "Win32_Volume"; // "Win32_ComputerSystem";
-        string propertyName = "*"; //'"TotalPhysicalMemory";
-        string mmiQuery = "SELECT " + propertyName + " FROM " + className;
-        CimSession session = CimSession.Create(computerName, SessionOptions);
+
+        string mmiQuery = "SELECT " + propertiesString + " FROM " + ClassName;
+        CimSession session = CimSession.Create(ComputerName, SessionOptions);
         CimInstanceWatcher instanceWatcher = new();
         CimAsyncMultipleResults<CimInstance> multiResult = session.QueryInstancesAsync(nameSpace, "WQL", mmiQuery);
         multiResult.Subscribe(instanceWatcher);
 
-        // Wait for the results
+        // Wait for the results.
         while (instanceWatcher.IsFinsihed == false && instanceWatcher.IsError == false)
         {
             await Task.Delay(200);
@@ -72,6 +95,7 @@ public class MMIService
             IsError = true;
             ErrorMessage = instanceWatcher.ErrorMessage;
             Log.Error("Error: {0}", instanceWatcher.ErrorMessage);
+            throw new Exception(instanceWatcher.ErrorMessage);
         }
         else
         {
