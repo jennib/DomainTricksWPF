@@ -23,9 +23,12 @@ namespace DomainTricks_WPF.Models
         public SecureString SecurePassword {get
             {
                 SecureString securePassword = new();
-                foreach (char c in Password)
+                if (Password is not null)
                 {
-                    securePassword.AppendChar(c);
+                    foreach (char c in Password)
+                    {
+                        securePassword.AppendChar(c);
+                    }
                 }
                 return securePassword;
             }

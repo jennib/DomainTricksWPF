@@ -3,6 +3,7 @@ using DomainTricks_WPF.Services;
 using Microsoft.Management.Infrastructure;
 using Serilog;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,7 +35,19 @@ namespace DomainTricks_WPF.ViewModels
             }
             else
             {
-                Log.Information($"{computerName} returned: {mmiService.Instances.Count()}");
+                Log.Information($"{computerName} returned: {mmiService.Instances.Count()}.");
+                foreach (CimInstance instance in mmiService.Instances)
+                {
+                    Log.Information("");
+                    foreach (CimProperty property in instance.CimInstanceProperties)
+                    {
+                         Log.Information($"Name: {property.Name}:{property.Name?.GetType().ToString()} value: {property.Value}:{property.Value?.GetType().ToString()} ");
+                    }
+                }
+                //foreach (DictionaryEntry result in mmiService.Results)
+                //{
+                //    Log.Information($"- {result.Key.ToString() } - {result.Value?.ToString()}");
+                //}
             }
            
         }

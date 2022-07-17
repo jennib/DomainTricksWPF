@@ -4,6 +4,7 @@ using Microsoft.Management.Infrastructure.Generic;
 using Microsoft.Management.Infrastructure.Options;
 using Serilog;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,6 +21,7 @@ public class MMIService
     public string? ErrorMessage = string.Empty;
 
     public List<CimInstance> Instances = new();
+
     public MMIService(ILogger logger)
     {
         Log.Logger = logger;
@@ -35,16 +37,6 @@ public class MMIService
             return;
         }
 
-        // Authentication
-        //string domain = "tuttistudios.com";
-        //string username = "jennifer";
-        //string plaintextpassword = "password";
-        //SecureString securepassword = new();
-        //foreach (char c in plaintextpassword)
-        //{
-        //    securepassword.AppendChar(c);
-        //}
-
         WSManSessionOptions SessionOptions = new();
 
         // Use UserName and Password if the exits
@@ -57,8 +49,8 @@ public class MMIService
         SessionOptions.Timeout = new TimeSpan(0, 0, 10);
 
         string nameSpace = @"root\cimv2";
-        string className = "Win32_ComputerSystem";
-        string propertyName = "TotalPhysicalMemory";
+        string className = "Win32_Volume"; // "Win32_ComputerSystem";
+        string propertyName = "*"; //'"TotalPhysicalMemory";
         string mmiQuery = "SELECT " + propertyName + " FROM " + className;
         CimSession session = CimSession.Create(computerName, SessionOptions);
         CimInstanceWatcher instanceWatcher = new();
@@ -73,7 +65,7 @@ public class MMIService
 
         IsError = instanceWatcher.IsError;
         ErrorMessage = instanceWatcher.ErrorMessage;
-        Instances = instanceWatcher.Instances.ToList();
+        Instances = instanceWatcher.Instances;
 
         if (instanceWatcher.IsError)
         {
@@ -83,12 +75,10 @@ public class MMIService
         }
         else
         {
+            Log.Information($"There are {instanceWatcher.Instances.Count()} instances.");
             foreach (CimInstance instance in instanceWatcher.Instances)
             {
-                if (instance.CimInstanceProperties["TotalPhysicalMemory"].ToString()[0] > ' ')
-                {
-                    Debug.WriteLine("TotalPhysicalMemory is {0}", instance.CimInstanceProperties["TotalPhysicalMemory"]);
-                }
+                Log.Information($" - There are {instance.CimInstanceProperties.Count()} properties.");
             }
         }
         return;
@@ -130,7 +120,7 @@ class CimInstanceWatcher : IObserver<CimInstance>
     public void OnNext(CimInstance value)
     {
         Instances.Add(value);
-        Log.Information("Value: " + value);
+        //Log.Information("Value: " + value);
     }
 }
 
