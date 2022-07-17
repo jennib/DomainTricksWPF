@@ -36,7 +36,8 @@ public class MainViewModel
     {
         DomainService domainService = new(logger);
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
-        Log.Information($"Domain path: {domainPath}");
+        string domainName = DomainService.DomainNameFromLDAPPath(domainPath);
+        Log.Information($"Domain path: {domainPath} name: {domainName}");
     }
 
 
