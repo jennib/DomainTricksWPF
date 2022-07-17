@@ -24,21 +24,21 @@ namespace DomainTricks_WPF.ViewModels
 
             // Test the MMIService.
             Log.Information("Test the MMIService.");
-            TestMMI(logger);
+            TestMMI(logger,computer);
         }
 
 
         // Test the Microsoft Management Infrastructure call.
-        async void TestMMI(ILogger logger)
+        async void TestMMI(ILogger logger, ComputerModel computer)
         {
             // Prepare to call MMIService.
             string computerName = "RELIC-PC";
-            AuthenticationModel auth = new AuthenticationModel("tuttistudios.com", "jennifer", "password");
+            AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
             string[] PropertiesArray = { "DriveType" };//{"TotalPhysicalMemory"};
             string ClassName = "Win32_Volume"; //"Win32_ComputerSystem";
-            string FilterName = "DriveType=3";
+            string FilterName = "";
 
-            MMIService mmiService = new MMIService(logger, computerName)
+            MMIService mmiService = new(logger, computerName)
             {
                 Authentication = auth,
                 PropertiesArray = PropertiesArray,
@@ -53,7 +53,7 @@ namespace DomainTricks_WPF.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Exception in TestMMI");
+                Log.Error(ex, "Exception in TestMMI: {0}", ex.Message);
             }
 
             // Check the Resuylts.
@@ -65,7 +65,11 @@ namespace DomainTricks_WPF.ViewModels
             }
             else
             {
-                Log.Information($"{computerName} returned: {mmiService.Instances.Count()}.");
+                // Add to the ComputerMOdel.
+                computer.InstancesDictionary.Add(ClassName,mmiService.Instances);
+                //Log.Information("Computer now has {0} Instances.", computer.Instances.Count);
+                
+                Log.Information($"{computerName} returned: {mmiService.Instances.Count}.");
                 foreach (CimInstance instance in mmiService.Instances)
                 {
                     Log.Information("");

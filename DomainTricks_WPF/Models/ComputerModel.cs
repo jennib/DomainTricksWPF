@@ -1,6 +1,8 @@
-﻿using Serilog;
+﻿using Microsoft.Management.Infrastructure;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +22,10 @@ public class ComputerModel : ModelBase
             OnPropertyChanged(nameof(Name));
         }
     }
+    
+   // private List<CimInstance>? Instances { get; set; }
+    
+    public Dictionary<string,List<CimInstance>> InstancesDictionary { get; set; } = new();
 
 
     public ComputerModel(ILogger logger, Guid id)
