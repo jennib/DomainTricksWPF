@@ -64,10 +64,10 @@ public class MMIService
 
         WSManSessionOptions SessionOptions = new();
 
-        // Do not use authenication if this is the local computer
+        // Authnetication is not supported on the local computer.
         if (ComputerModel.IsLocalComputer(ComputerName) == false)
         {
-            // Use UserName and Password if the exits.
+            // Use UserName and Password if they exit.
             if (Authentication is not null && Authentication?.UserName is not null && Authentication?.Password is not null)
             {
                 // create Credentials.
@@ -75,11 +75,15 @@ public class MMIService
                 SessionOptions.AddDestinationCredentials(Credentials);
             }
         }
+
+        // MMI Search Timeout.
         SessionOptions.Timeout = new TimeSpan(0, 0, 10);
 
         string nameSpace = @"root\cimv2";
 
         string mmiQuery = "SELECT " + propertiesString + " FROM " + ClassName;
+        Log.Information($"MMI Query: {mmiQuery}");
+        
         // Append the filter if one exsits.
         if (string.IsNullOrEmpty(FilterName) == false)
         {

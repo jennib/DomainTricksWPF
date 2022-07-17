@@ -22,9 +22,21 @@ public class MainViewModel
         Log.Information("Test the ComputerModel.");
         ComputerModel computer = new(logger, Guid.NewGuid());
 
+        // Test the Domain Service
+        Log.Information("Test the DomainService.");
+        TestDomainService(logger);
+
         // Test the MMIService.
         Log.Information("Test the MMIService.");
         TestMMI(logger,computer);
+    }
+
+    // Test the Domain Service call
+    async void TestDomainService(ILogger logger)
+    {
+        DomainService domainService = new(logger);
+        string domainPath = await DomainService.GetCurrentDomainPathAsync();
+        Log.Information($"Domain path: {domainPath}");
     }
 
 
@@ -32,7 +44,7 @@ public class MainViewModel
     async void TestMMI(ILogger logger, ComputerModel computer)
     {
         // Prepare to call MMIService.
-        string computerName = "BRUNO-PC";
+        string computerName = "RELIC-PC";
        AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
        // AuthenticationModel auth = new();
         string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
