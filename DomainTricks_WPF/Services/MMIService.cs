@@ -64,12 +64,16 @@ public class MMIService
 
         WSManSessionOptions SessionOptions = new();
 
-        // Use UserName and Password if the exits.
-        if (Authentication is not null || Authentication?.UserName is not null || Authentication?.Password is not null)
+        // Do not use authenication if this is the local computer
+        if (ComputerModel.IsLocalComputer(ComputerName) == false)
         {
-            // create Credentials.
-            CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
-            SessionOptions.AddDestinationCredentials(Credentials);
+            // Use UserName and Password if the exits.
+            if (Authentication is not null && Authentication?.UserName is not null && Authentication?.Password is not null)
+            {
+                // create Credentials.
+                CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
+                SessionOptions.AddDestinationCredentials(Credentials);
+            }
         }
         SessionOptions.Timeout = new TimeSpan(0, 0, 10);
 

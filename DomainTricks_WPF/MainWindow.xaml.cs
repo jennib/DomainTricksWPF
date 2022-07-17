@@ -15,24 +15,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace DomainTricks_WPF
-{
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-        public MainWindow(object dataContext)
-        {
-            this.DataContext = dataContext;
-            InitializeComponent();
-        }
+namespace DomainTricks_WPF;
 
-    
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-           
-            Debug.WriteLine("Main Window Loaded.");
-        }
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
+{
+    public MainWindow(object dataContext)
+    {
+        this.DataContext = dataContext;
+        InitializeComponent();
+    }
+
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+       
+        Debug.WriteLine("Main Window Loaded.");
     }
 }

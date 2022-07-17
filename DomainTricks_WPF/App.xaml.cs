@@ -9,41 +9,40 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Navigation;
 
-namespace DomainTricks_WPF
+namespace DomainTricks_WPF;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    private readonly MainWindow appWindow;
+
+    private readonly ILogger Logger;
+    public App()
     {
-        private readonly MainWindow appWindow;
+        // Set up Serilog
+        Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Debug()
+                .WriteTo.File("logs/DomainTricks_Log.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
 
-        private readonly ILogger Logger;
-        public App()
-        {
-            // Set up Serilog
-            Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Debug()
-                    .WriteTo.Debug()
-                    .WriteTo.File("logs/DomainTricks_Log.txt", rollingInterval: RollingInterval.Day)
-                    .CreateLogger();
+        Logger = Log.Logger;
+        Log.Information("============= Starting App. =============");
 
-            Logger = Log.Logger;
-            Log.Information("============= Starting App. =============");
+        // Setup and Show the Main Window
+        appWindow = new(new MainViewModel(Logger));
+        //appWindow.DataContext = new MainViewModel(Logger);
+        appWindow.Show();
+    }
 
-            // Setup and Show the Main Window
-            appWindow = new(new MainViewModel(Logger));
-            //appWindow.DataContext = new MainViewModel(Logger);
-            appWindow.Show();
-        }
+   
 
-       
-
-        protected override  void OnExit(System.Windows.ExitEventArgs e)
-        {
-            Log.Information("");
-            Log.Information($"App exiting.");
-            base.OnExit(e);
-        }
+    protected override  void OnExit(System.Windows.ExitEventArgs e)
+    {
+        Log.Information("");
+        Log.Information($"App exiting.");
+        base.OnExit(e);
     }
 }

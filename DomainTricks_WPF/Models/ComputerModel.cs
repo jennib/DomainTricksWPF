@@ -18,14 +18,22 @@ public class ComputerModel : ModelBase
     public string? Name
     {
         get { return _name; }
-        set { _name = value;
+        set
+        {
+            _name = value;
             OnPropertyChanged(nameof(Name));
         }
     }
-    
-   // private List<CimInstance>? Instances { get; set; }
-    
-    public Dictionary<string,List<CimInstance>> InstancesDictionary { get; set; } = new();
+
+    // checks if this ComputerModel points to the computer it is running on
+    public static bool IsLocalComputer(string computerName)
+    {
+        if (computerName is null) return false;
+        return computerName.Equals(Environment.MachineName);
+    }
+
+    // Key should be the class name used to generate the CimInstance List.
+    public Dictionary<string, List<CimInstance>> InstancesDictionary { get; set; } = new();
 
 
     public ComputerModel(ILogger logger, Guid id)
