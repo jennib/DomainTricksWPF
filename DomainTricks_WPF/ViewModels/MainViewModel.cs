@@ -13,7 +13,7 @@ namespace DomainTricks_WPF.ViewModels
 {
     public class MainViewModel
     {
-        public  MainViewModel(ILogger logger)
+        public MainViewModel(ILogger logger)
         {
             Log.Logger = logger;
             Log.Information("MainViewModel start.");
@@ -27,30 +27,35 @@ namespace DomainTricks_WPF.ViewModels
             TestMMI(logger);
         }
 
-        
+
         // Test the Microsoft Management Infrastructure call.
         async void TestMMI(ILogger logger)
         {
             // Prepare to call MMIService.
             string computerName = "RELIC-PC";
             AuthenticationModel auth = new AuthenticationModel("tuttistudios.com", "jennifer", "password");
-            string[] PropertiesArray = {"TotalPhysicalMemory"};
-            string ClassName = "Win32_ComputerSystem";
-            
-            MMIService mmiService = new MMIService(logger, computerName) {
+            string[] PropertiesArray = { "DriveType" };//{"TotalPhysicalMemory"};
+            string ClassName = "Win32_Volume"; //"Win32_ComputerSystem";
+            string FilterName = "DriveType=3";
+
+            MMIService mmiService = new MMIService(logger, computerName)
+            {
                 Authentication = auth,
                 PropertiesArray = PropertiesArray,
-                ClassName = ClassName
+                ClassName = ClassName,
+                FilterName = FilterName
             };
-           
+
             // Call the MMIService .
-            try {
+            try
+            {
                 await mmiService.Execute();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Log.Error(ex, "Exception in TestMMI");
             }
-            
+
             // Check the Resuylts.
             // The Instances property is of type CimInstance.  
             // It can have multiple Instances and each instance can have multiple Properties.
@@ -66,7 +71,8 @@ namespace DomainTricks_WPF.ViewModels
                     Log.Information("");
 
                     // If we asked for only some properties, then we can query for only those properties.
-                    if (PropertiesArray.Length > 0)
+                    // Also check that PropertiesArray does not contain "*" which is the wildcard search, asks for everything.
+                    if (PropertiesArray?.Length > 0 && Array.Exists(PropertiesArray, element => element != "*"))
                     {
                         foreach (string property in PropertiesArray)
                         {

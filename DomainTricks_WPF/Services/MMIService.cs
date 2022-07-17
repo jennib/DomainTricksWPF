@@ -28,6 +28,7 @@ public class MMIService
     public string? ClassName { get; set; }
 
     public string[]? PropertiesArray { get; set; }
+    public string? FilterName { get; set; }
 
     // Set in the constructor.
     public string ComputerName { get; }
@@ -75,6 +76,11 @@ public class MMIService
         string nameSpace = @"root\cimv2";
 
         string mmiQuery = "SELECT " + propertiesString + " FROM " + ClassName;
+        // Append the filter if one exsits.
+        if (string.IsNullOrEmpty(FilterName) == false)
+        {
+            mmiQuery += $" WHERE {FilterName}";
+        }
         CimSession session = CimSession.Create(ComputerName, SessionOptions);
         CimInstanceWatcher instanceWatcher = new();
         CimAsyncMultipleResults<CimInstance> multiResult = session.QueryInstancesAsync(nameSpace, "WQL", mmiQuery);
