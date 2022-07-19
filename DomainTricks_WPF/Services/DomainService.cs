@@ -68,4 +68,73 @@ public class DomainService
             return LDAPString;
         }
     }
+
+    
+    public  Task<SearchResultCollection> ADSearcher(
+        string domainPath,
+        string filter,
+        string[] propertiesToReturn)
+    {
+        Log.Information("SearchDirectoryTask start");
+
+        //https://stackoverflow.com/questions/62180766/async-active-directory-querying
+        //     return Task.Run(() =>
+        //    {
+        DirectoryEntry entry = new(domainPath);
+        DirectorySearcher mySearcher = new(entry)
+        {
+            Filter = filter,
+            SizeLimit = int.MaxValue,
+            PageSize = int.MaxValue,
+            Asynchronous = true
+        };
+        mySearcher.PropertiesToLoad.AddRange(propertiesToReturn);
+        //foreach (string property in propertiesToReturn)
+        //{
+        //    mySearcher.PropertiesToLoad.Add(property);
+        //}
+        mySearcher.ClientTimeout = TimeSpan.FromSeconds(5);
+        mySearcher.ServerTimeLimit = TimeSpan.FromSeconds(5);
+        List<SearchResult> resultList = new();
+        try
+        {
+            SearchResultCollection mySearchResults = mySearcher.FindAll();
+            foreach (SearchResult result in mySearchResults)
+            {
+                resultList.Add(result);
+            }
+            mySearcher.Dispose();
+            entry.Dispose();
+            Log.Information("SearchDirectoryTask end");
+
+            return Task<SearchResultCollection>.FromResult(mySearchResults);
+            // var it = await  Task.Run(() =>
+
+            // mySearchResults = mySearcher.FindAll();
+            // );
+            //  mySearchResults = it;
+        }
+        catch (Exception ex)
+        {
+            Log.Information($"Error {ex}");
+            mySearcher.Dispose();
+            entry.Dispose();
+            Log.Information("SearchDirectoryTask end");
+
+            throw;
+        }
+    }    
+}
+
+public static class ADExtensionMethods
+{
+    public static string GetPropertyValue(this SearchResult sr, string propertyName)
+    {
+        string ret = string.Empty;
+
+        if (sr.Properties[propertyName].Count > 0)
+            ret = sr.Properties[propertyName][0].ToString();
+
+        return ret;
+    }
 }

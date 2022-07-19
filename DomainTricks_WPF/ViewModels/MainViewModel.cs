@@ -5,6 +5,7 @@ using Serilog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,9 +27,13 @@ public class MainViewModel
         Log.Information("Test the DomainService.");
         TestDomainService(logger);
 
+        // Test the Direcotry Search
+        Log.Information("Test the Directory Search.");
+        TestADSearcher(logger);
+
         // Test the MMIService.
         Log.Information("Test the MMIService.");
-        TestMMI(logger,computer);
+        TestMMI(logger, computer);
     }
 
     // Test the Domain Service call
@@ -38,16 +43,40 @@ public class MainViewModel
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
         string domainName = DomainService.DomainNameFromLDAPPath(domainPath);
         Log.Information($"Domain path: {domainPath} name: {domainName}");
+
     }
 
+    // Test the Active Directory Searcher;
+    async void TestADSearcher(ILogger logger)
+    {
+        DomainService domainService = new(logger);
+        string domainPath = "LDAP://DC=tuttistudios,DC=com";
+        string filter = ("(&(objectClass=computer)(primaryGroupID=515))");
+        string[] propertiesToReturn = { "dNSHostName", "OU", "distinguishedName" };
+        SearchResultCollection searchResults = await domainService.ADSearcher(domainPath, filter, propertiesToReturn);
+        Log.Information($"TestSearcher result {searchResults.Count}");
+        foreach (SearchResult result in searchResults)
+        {
+            Log.Information($"-result {result.GetPropertyValue("DisplayName")}");
+            Log.Information($" DistinguisedName = {result.GetPropertyValue("distinguishedname")}");
+            foreach (DictionaryEntry property in result.Properties)
+            {
+                foreach (var val in (property.Value as ResultPropertyValueCollection))
+                {
+                    Log.Information($"--{property.Key} = {val}");
+                }
+            }
+        }
+
+    }
 
     // Test the Microsoft Management Infrastructure call.
     async void TestMMI(ILogger logger, ComputerModel computer)
     {
         // Prepare to call MMIService.
         string computerName = "RELIC-PC";
-       AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
-       // AuthenticationModel auth = new();
+        AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+        // AuthenticationModel auth = new();
         string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
         string ClassName = "Win32_Volume"; //"Win32_ComputerSystem";
         string FilterName = "";
@@ -80,9 +109,9 @@ public class MainViewModel
         else
         {
             // Add to the ComputerMOdel.
-            computer.InstancesDictionary.Add(ClassName,mmiService.Instances);
+            computer.InstancesDictionary.Add(ClassName, mmiService.Instances);
             //Log.Information("Computer now has {0} Instances.", computer.Instances.Count);
-            
+
             Log.Information($"{computerName} returned: {mmiService.Instances.Count}.");
             foreach (CimInstance instance in mmiService.Instances)
             {
