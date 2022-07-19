@@ -13,8 +13,8 @@ public class ComputerModel : ModelBase
 {
     private Guid _id;
     private string? _name;
-
-    public Guid Id { get => _id; }
+    
+    public Guid Id { get { return _id; }  }
     public string? Name
     {
         get { return _name; }
@@ -24,6 +24,8 @@ public class ComputerModel : ModelBase
             OnPropertyChanged(nameof(Name));
         }
     }
+
+    public List<string>? OUList { get; set; }
 
     // checks if this ComputerModel points to the computer it is running on
     public static bool IsLocalComputer(string computerName)
@@ -36,9 +38,11 @@ public class ComputerModel : ModelBase
     public Dictionary<string, List<CimInstance>> InstancesDictionary { get; set; } = new();
 
 
-    public ComputerModel(ILogger logger, Guid id)
+    public ComputerModel(string computerName, ILogger logger)
     {
-        _id = id;
+        Log.Logger = logger;
+        _name = computerName;
+        _id = Guid.NewGuid();
         Log.Information($"Creating comptuer with Guid {_id}.");
     }
 }

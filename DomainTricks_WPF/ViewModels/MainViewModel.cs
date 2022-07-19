@@ -16,12 +16,13 @@ public class MainViewModel
 {
     public MainViewModel(ILogger logger)
     {
+        /*
         Log.Logger = logger;
         Log.Information("MainViewModel start.");
 
         // Test the Computer Model.
         Log.Information("Test the ComputerModel.");
-        ComputerModel computer = new(logger, Guid.NewGuid());
+        ComputerModel computer = new("MyCompuyter",logger);
 
         // Test the Domain Service
         Log.Information("Test the DomainService.");
@@ -34,6 +35,7 @@ public class MainViewModel
         // Test the MMIService.
         Log.Information("Test the MMIService.");
         TestMMI(logger, computer);
+        */
     }
 
     // Test the Domain Service call
@@ -49,37 +51,11 @@ public class MainViewModel
     // Test the Active Directory Searcher;
     async void TestADSearcher(ILogger logger)
     {
-        DomainService domainService = new(logger);
-        string domainPath = "LDAP://DC=tuttistudios,DC=com";
-        string filter = ("(&(objectClass=computer)(primaryGroupID=515))");
-        string[] propertiesToReturn = { "dNSHostName", "OU", "distinguishedName" };
-        SearchResultCollection searchResults;
-        
-        try
-        { 
-             searchResults = await domainService.ADSearcher(domainPath, filter, propertiesToReturn);
-        } 
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Exception in TestADSearcher: {0}", ex.Message);
-            return;
-        }
-        
-        Log.Information($"TestSearcher result {searchResults.Count}");
-        
-        foreach (SearchResult result in searchResults)
-        {
-            Log.Information($"-result {result.GetPropertyValue("DisplayName")}");
-            Log.Information($" DistinguisedName = {result.GetPropertyValue("distinguishedname")}");
-            foreach (DictionaryEntry property in result.Properties)
-            {
-                foreach (var val in (property.Value as ResultPropertyValueCollection))
-                {
-                    Log.Information($"--{property.Key} = {val}");
-                }
-            }
-        }
 
+        ADService adService = new(logger);
+        List<ComputerModel> computerModels = await adService.GetListOfComputersFromADAsync(@"LDAP://DC=tuttistudios,DC=com");
+        Log.Information($"computerModels has {computerModels.Count()} computers.");
+        
     }
 
     // Test the Microsoft Management Infrastructure call.
