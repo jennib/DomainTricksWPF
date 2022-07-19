@@ -53,8 +53,20 @@ public class MainViewModel
         string domainPath = "LDAP://DC=tuttistudios,DC=com";
         string filter = ("(&(objectClass=computer)(primaryGroupID=515))");
         string[] propertiesToReturn = { "dNSHostName", "OU", "distinguishedName" };
-        SearchResultCollection searchResults = await domainService.ADSearcher(domainPath, filter, propertiesToReturn);
+        SearchResultCollection searchResults;
+        
+        try
+        { 
+             searchResults = await domainService.ADSearcher(domainPath, filter, propertiesToReturn);
+        } 
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Exception in TestADSearcher: {0}", ex.Message);
+            return;
+        }
+        
         Log.Information($"TestSearcher result {searchResults.Count}");
+        
         foreach (SearchResult result in searchResults)
         {
             Log.Information($"-result {result.GetPropertyValue("DisplayName")}");

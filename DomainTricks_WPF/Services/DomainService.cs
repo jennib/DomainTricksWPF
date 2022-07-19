@@ -75,11 +75,15 @@ public class DomainService
         string filter,
         string[] propertiesToReturn)
     {
+
+        // Example call
+        //string domainPath = "LDAP://DC=tuttistudios,DC=com";
+        //string filter = ("(&(objectClass=computer)(primaryGroupID=515))");
+        //string[] propertiesToReturn = { "dNSHostName", "OU", "distinguishedName" };
+        //SearchResultCollection searchResults = await domainService.ADSearcher(domainPath, filter, propertiesToReturn);
+
         Log.Information("SearchDirectoryTask start");
 
-        //https://stackoverflow.com/questions/62180766/async-active-directory-querying
-        //     return Task.Run(() =>
-        //    {
         DirectoryEntry entry = new(domainPath);
         DirectorySearcher mySearcher = new(entry)
         {
@@ -89,13 +93,10 @@ public class DomainService
             Asynchronous = true
         };
         mySearcher.PropertiesToLoad.AddRange(propertiesToReturn);
-        //foreach (string property in propertiesToReturn)
-        //{
-        //    mySearcher.PropertiesToLoad.Add(property);
-        //}
         mySearcher.ClientTimeout = TimeSpan.FromSeconds(5);
         mySearcher.ServerTimeLimit = TimeSpan.FromSeconds(5);
         List<SearchResult> resultList = new();
+        
         try
         {
             SearchResultCollection mySearchResults = mySearcher.FindAll();
@@ -108,11 +109,6 @@ public class DomainService
             Log.Information("SearchDirectoryTask end");
 
             return Task<SearchResultCollection>.FromResult(mySearchResults);
-            // var it = await  Task.Run(() =>
-
-            // mySearchResults = mySearcher.FindAll();
-            // );
-            //  mySearchResults = it;
         }
         catch (Exception ex)
         {
