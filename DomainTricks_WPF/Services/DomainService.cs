@@ -68,20 +68,47 @@ public class DomainService
             return LDAPString;
         }
     }
-
     
     public  Task<SearchResultCollection> ADSearcher(
         string domainPath,
         string filter,
         string[] propertiesToReturn)
     {
-
+        #region Example Call
         // Example call
+
+        //DomainService domainService = new(logger);
         //string domainPath = "LDAP://DC=tuttistudios,DC=com";
         //string filter = ("(&(objectClass=computer)(primaryGroupID=515))");
         //string[] propertiesToReturn = { "dNSHostName", "OU", "distinguishedName" };
-        //SearchResultCollection searchResults = await domainService.ADSearcher(domainPath, filter, propertiesToReturn);
+        //SearchResultCollection searchResults;
 
+        //try
+        //{ 
+        //     searchResults = await domainService.ADSearcher(domainPath, filter, propertiesToReturn);
+        //} 
+        //catch (Exception ex)
+        //{
+        //    Log.Error(ex, "Exception in TestADSearcher: {0}", ex.Message);
+        //    return;
+        //}
+
+        //Log.Information($"TestSearcher result {searchResults.Count}");
+
+        //foreach (SearchResult result in searchResults)
+        //{
+        //    Log.Information($"-result {result.GetPropertyValue("DisplayName")}");
+        //    Log.Information($" DistinguisedName = {result.GetPropertyValue("distinguishedname")}");
+        //    foreach (DictionaryEntry property in result.Properties)
+        //    {
+        //        foreach (var val in (property.Value as ResultPropertyValueCollection))
+        //        {
+        //            Log.Information($"--{property.Key} = {val}");
+        //        }
+        //    }
+        //}
+        #endregion Example Call
+        
         Log.Information("SearchDirectoryTask start");
 
         DirectoryEntry entry = new(domainPath);
@@ -126,7 +153,7 @@ public static class ADExtensionMethods
 {
     public static string GetPropertyValue(this SearchResult sr, string propertyName)
     {
-        string ret = string.Empty;
+        string? ret = string.Empty;
 
         if (sr.Properties[propertyName].Count > 0)
             ret = sr.Properties[propertyName][0].ToString();
