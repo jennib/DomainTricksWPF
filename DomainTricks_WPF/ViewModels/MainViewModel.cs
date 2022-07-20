@@ -16,13 +16,17 @@ public class MainViewModel
 {
     public MainViewModel(ILogger logger)
     {
-        /*
+
+
         Log.Logger = logger;
         Log.Information("MainViewModel start.");
 
+        // Test Timer
+        TestTimer(logger);
+
         // Test the Computer Model.
         Log.Information("Test the ComputerModel.");
-        ComputerModel computer = new("MyCompuyter",logger);
+        ComputerModel computer = new("MyCompuyter", logger);
 
         // Test the Domain Service
         Log.Information("Test the DomainService.");
@@ -35,7 +39,18 @@ public class MainViewModel
         // Test the MMIService.
         Log.Information("Test the MMIService.");
         TestMMI(logger, computer);
-        */
+
+
+    }
+
+    // Test the Timer in BackgroundTask
+    public async void TestTimer(ILogger logger)
+    {
+        Log.Information("Test the Timer in BackgroundTask.");
+        BackgroundTask task = new BackgroundTask(TimeSpan.FromMilliseconds(1000), logger);
+
+        task.Start();
+       // await task.StopAsync();
     }
 
     // Test the Domain Service call
@@ -55,7 +70,7 @@ public class MainViewModel
         ADService adService = new(logger);
         List<ComputerModel> computerModels = await adService.GetListOfComputersFromADAsync(@"LDAP://DC=tuttistudios,DC=com");
         Log.Information($"computerModels has {computerModels.Count()} computers.");
-        
+
     }
 
     // Test the Microsoft Management Infrastructure call.
@@ -126,3 +141,5 @@ public class MainViewModel
         }
     }
 }
+
+

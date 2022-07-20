@@ -8,72 +8,72 @@
         Loaded="OnLoaded"
         Title="MainWindow" Height="450" Width="800">
 
-        <DockPanel>
-            <Menu DockPanel.Dock="Top">
-                <MenuItem Header="_File">
-                    <MenuItem Header="_New" />
-                    <MenuItem Header="_Open" />
-                    <MenuItem Header="_Save" />
-                    <Separator />
-                    <MenuItem Header="E_xit" Name="Exit"  
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New" />
+                <MenuItem Header="_Open" />
+                <MenuItem Header="_Save" />
+                <Separator />
+                <MenuItem Header="E_xit" Name="Exit"  
                           Command="{Binding MenuClickedCommand}" 
                           CommandParameter="Exit"
                           InputGestureText="Alt+F4"/>
-                </MenuItem>
-                <MenuItem Header="_Run">
-                    <MenuItem Header="Run _Job" Command="{Binding RunFromMenuCommand}"/>
-                    <MenuItem Header="Paused" IsCheckable="True" IsChecked="{Binding IsPaused}" Command="{Binding PauseProcessing}" Name="pauseMenu"/>
-                </MenuItem>
-                <MenuItem Header="_Tools">
-                    <MenuItem Header="_Preferences" 
+            </MenuItem>
+            <MenuItem Header="_Run">
+                <MenuItem Header="Run _Job" Command="{Binding RunFromMenuCommand}"/>
+                <MenuItem Header="Paused" IsCheckable="True" IsChecked="{Binding IsPaused}" Command="{Binding PauseProcessing}" Name="pauseMenu"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="_Preferences" 
                           Command="{Binding OpenPreferencesCommand}" />
-                </MenuItem>
-                <MenuItem Header="_Help">
-                    <MenuItem Header="_View Help" Name="Help" 
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_View Help" Name="Help" 
                           Command="{Binding MenuClickedCommand}" 
                           CommandParameter="Help"
                           InputGestureText="CTR+F1"/>
-                    <Separator />
-                    <MenuItem Header="_About" Name="About"  
+                <Separator />
+                <MenuItem Header="_About" Name="About"  
                           Command="{Binding MenuClickedCommand}" 
                           CommandParameter="About"/>
-                </MenuItem>
-            </Menu>
-            <StatusBar DockPanel.Dock="Bottom" Height="20" FontSize="10">
-                <StatusBar.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="10" />
-                                <ColumnDefinition Width="Auto" />
+            </MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom" Height="20" FontSize="10">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10" />
+                            <ColumnDefinition Width="Auto" />
 
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="10" />
-                            </Grid.ColumnDefinitions>
-                        </Grid>
-                    </ItemsPanelTemplate>
-                </StatusBar.ItemsPanel>
-                <StatusBarItem HorizontalAlignment="Left" Margin="10">
-                </StatusBarItem>
-                <StatusBarItem Grid.Column="1" >
-                    <TextBlock  Text="Filter"/>
-                </StatusBarItem>
-                <StatusBarItem Grid.Column="2" >
-                    <TextBox Name="FilterTextBox" Text="{Binding FilterString,Mode=TwoWay, 
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="10" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem HorizontalAlignment="Left" Margin="10">
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1" >
+                <TextBlock  Text="Filter"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2" >
+                <TextBox Name="FilterTextBox" Text="{Binding FilterString,Mode=TwoWay, 
                     UpdateSourceTrigger=PropertyChanged}" Width="200"
                         />
-                </StatusBarItem>
-                <Separator Grid.Column="3"/>
-                <StatusBarItem Grid.Column="4">
-                    <TextBlock Name="StatusBarInfoBlock" Text="{Binding StatusBarText}"/>
-                </StatusBarItem>
-                <Separator Grid.Column="5"/>
-                <StatusBarItem Grid.Column="6" HorizontalAlignment="Stretch" Name="progressBarContainer">
-                    <ProgressBar Name="progressBar" 
+            </StatusBarItem>
+            <Separator Grid.Column="3"/>
+            <StatusBarItem Grid.Column="4">
+                <TextBlock Name="StatusBarInfoBlock" Text="{Binding StatusBarText}"/>
+            </StatusBarItem>
+            <Separator Grid.Column="5"/>
+            <StatusBarItem Grid.Column="6" HorizontalAlignment="Stretch" Name="progressBarContainer">
+                <ProgressBar Name="progressBar" 
                              Minimum="0" 
                              Maximum="{Binding ProgressBarMaximum}" 
                              Value="{Binding ProgressBarPercent}" 
@@ -81,14 +81,17 @@
                              Width="{Binding ElementName=progressBarContainer, Path=ActualWidth}"
                              Visibility="{Binding ProgressBarShouldBeVisible}">
 
-                    </ProgressBar >
-                </StatusBarItem>
-            </StatusBar>
+                </ProgressBar >
+            </StatusBarItem>
+        </StatusBar>
         <Grid>
-            
-            
+            <ScrollViewer>
+                <WrapPanel>
+                    
+                </WrapPanel>
+            </ScrollViewer>
         </Grid>
     </DockPanel>
 
-    
+
 </Window>
