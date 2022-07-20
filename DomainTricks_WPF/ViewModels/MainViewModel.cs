@@ -24,33 +24,53 @@ public class MainViewModel
         // Test Timer
         TestTimer(logger);
 
-        // Test the Computer Model.
-        Log.Information("Test the ComputerModel.");
-        ComputerModel computer = new("MyCompuyter", logger);
+        // Test the ComputersService
+        Log.Information("Testing the ComputersService.");
+        TestComputersService(logger);
 
-        // Test the Domain Service
-        Log.Information("Test the DomainService.");
-        TestDomainService(logger);
+        //// Test the Computer Model.
+        //Log.Information("Test the ComputerModel.");
+        //ComputerModel computer = new("MyCompuyter", logger);
 
-        // Test the Direcotry Search
-        Log.Information("Test the Directory Search.");
-        TestADSearcher(logger);
+        //// Test the Domain Service
+        //Log.Information("Test the DomainService.");
+        //TestDomainService(logger);
 
-        // Test the MMIService.
-        Log.Information("Test the MMIService.");
-        TestMMI(logger, computer);
+        //// Test the Direcotry Search
+        //Log.Information("Test the Directory Search.");
+        //TestADSearcher(logger);
+
+        //// Test the MMIService.
+        //Log.Information("Test the MMIService.");
+        //TestMMI(logger, computer);
 
 
+    }
+
+    // Test the ComputersService.
+    public async void TestComputersService(ILogger logger)
+    {
+        DomainService domainService = new(logger);
+        string domainPath = await DomainService.GetCurrentDomainPathAsync();
+
+        ComputersService computers = new(logger);
+        List<ComputerModel> computersList = await computers.GetComputers(domainPath);
+        foreach (ComputerModel computer in computersList)
+        {
+            Log.Information($"Computer: {computer.Name}");
+        }
     }
 
     // Test the Timer in BackgroundTask
     public async void TestTimer(ILogger logger)
     {
         Log.Information("Test the Timer in BackgroundTask.");
-        BackgroundTask task = new BackgroundTask(TimeSpan.FromMilliseconds(1000), logger);
+        BackgroundTask task = new BackgroundTask(TimeSpan.FromMilliseconds(100), logger);
 
         task.Start();
-       // await task.StopAsync();
+
+        await Task.Delay(TimeSpan.FromSeconds(10));
+         await task.StopAsync();
     }
 
     // Test the Domain Service call

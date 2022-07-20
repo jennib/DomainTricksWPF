@@ -44,7 +44,7 @@ public class BackgroundTask
         {
             // Eat this exception.  It is expected.
         }
-        catch (Exception ex)
+        catch (Exception ex) 
         {
             Log.Error(ex, "Exception in DoWorkAsnyc: {0}", ex.Message);
         }
