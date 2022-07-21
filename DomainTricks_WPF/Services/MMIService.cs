@@ -82,13 +82,14 @@ public class MMIService
         string nameSpace = @"root\cimv2";
 
         string mmiQuery = "SELECT " + propertiesString + " FROM " + ClassName;
-        Log.Information($"MMI Query: {mmiQuery}");
         
         // Append the filter if one exsits.
         if (string.IsNullOrEmpty(FilterName) == false)
         {
             mmiQuery += $" WHERE {FilterName}";
         }
+        Log.Information($"MMI Query: {mmiQuery}");
+
         CimSession session = CimSession.Create(ComputerName, SessionOptions);
         CimInstanceWatcher instanceWatcher = new();
         CimAsyncMultipleResults<CimInstance> multiResult = session.QueryInstancesAsync(nameSpace, "WQL", mmiQuery);

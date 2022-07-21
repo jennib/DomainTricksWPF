@@ -57,7 +57,7 @@ public class MainViewModel
         List<ComputerModel> computersList = await computers.GetComputers(domainPath);
         foreach (ComputerModel computer in computersList)
         {
-            Log.Information($"Computer: {computer.Name}");
+            Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances");
         }
     }
 
@@ -65,7 +65,7 @@ public class MainViewModel
     public async void TestTimer(ILogger logger)
     {
         Log.Information("Test the Timer in BackgroundTask.");
-        BackgroundTask task = new BackgroundTask(TimeSpan.FromMilliseconds(100), logger);
+        BackgroundTask task = new BackgroundTask(TimeSpan.FromMilliseconds(1000), logger);
 
         task.Start();
 
@@ -127,18 +127,17 @@ public class MainViewModel
         // It can have multiple Instances and each instance can have multiple Properties.
         if (mmiService.IsError == true)
         {
-            Log.Information($"{computerName} returned error: {mmiService.ErrorMessage}");
+            Log.Error($"{computerName} returned error: {mmiService.ErrorMessage}");
         }
         else
         {
             // Add to the ComputerMOdel.
             computer.InstancesDictionary.Add(ClassName, mmiService.Instances);
-            //Log.Information("Computer now has {0} Instances.", computer.Instances.Count);
 
-            Log.Information($"{computerName} returned: {mmiService.Instances.Count}.");
+            Log.Verbose($"{computerName} returned: {mmiService.Instances.Count}.");
             foreach (CimInstance instance in mmiService.Instances)
             {
-                Log.Information("");
+                Log.Verbose("");
 
                 // If we asked for only some properties, then we can query for only those properties.
                 // Also check that PropertiesArray does not contain "*" which is the wildcard search, asks for everything.
@@ -146,7 +145,7 @@ public class MainViewModel
                 {
                     foreach (string property in PropertiesArray)
                     {
-                        Log.Information($"{property} = {instance.CimInstanceProperties[property].Value}");
+                        Log.Verbose($"{property} = {instance.CimInstanceProperties[property].Value}");
                     }
                 }
                 else
@@ -154,7 +153,7 @@ public class MainViewModel
                     // Show us all the properties for the instance.
                     foreach (CimProperty property in instance.CimInstanceProperties)
                     {
-                        Log.Information($"Name: {property.Name}:{property.Name?.GetType().ToString()} value: {property.Value}:{property.Value?.GetType().ToString()} ");
+                        Log.Verbose($"Name: {property.Name}:{property.Name?.GetType().ToString()} value: {property.Value}:{property.Value?.GetType().ToString()} ");
                     }
                 }
             }
