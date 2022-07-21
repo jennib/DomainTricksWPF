@@ -45,24 +45,25 @@ namespace DomainTricks_WPF.Services
             string FilterName = "";
 
             List<ComputerModel> newComputers = new();
+            newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
 
             //Get the MMI data for each computer.
-            await Task.Run(() =>
-            {
-                Parallel.ForEach<ComputerModel>(computers, (computer) =>
-                {
-                    try
-                    {
-                        ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, PropertiesArray, ClassName, FilterName, auth).Result;
-                        newComputers.Add(newComputerWithMMI);
-                    }
-                    catch (Exception ex)
-                    {
-                        newComputers.Add(computer);
-                        Log.Error($"Error getting MMI data for {computer.Name}.  Error: {ex.Message}");
-                    }
-                });
-            });
+            //await Task.Run(() =>
+            //{
+            //    Parallel.ForEach<ComputerModel>(computers, (computer) =>
+            //    {
+            //        try
+            //        {
+            //            ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, PropertiesArray, ClassName, FilterName, auth).Result;
+            //            newComputers.Add(newComputerWithMMI);
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            newComputers.Add(computer);
+            //            Log.Error($"Error getting MMI data for {computer.Name}.  Error: {ex.Message}");
+            //        }
+            //    });
+            //});
 
             return newComputers;
         }
@@ -75,6 +76,39 @@ namespace DomainTricks_WPF.Services
 
             List<ComputerModel> newComputers = new();
 
+            newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
+
+            ////Get the MMI data for each computer.
+            //await Task.Run(() =>
+            //{
+            //    Parallel.ForEach<ComputerModel>(computers, (computer) =>
+            //    {
+            //        try
+            //        {
+            //            ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, PropertiesArray, ClassName, FilterName, auth).Result;
+            //            newComputers.Add(newComputerWithMMI);
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            newComputers.Add(computer);
+            //            Log.Error($"Error getting MMI data for {computer.Name}.  Error: {ex.Message}");
+            //        }
+            //    });
+            //});
+
+
+            return newComputers;
+        }
+
+        private async Task<List<ComputerModel>> GetListOfComputersWithInstances(ILogger logger, 
+            List<ComputerModel> computers,
+            string[] propertiesArray,
+            string className,
+            string filterName,
+            AuthenticationModel auth)
+        {
+            List<ComputerModel> newComputers = new();
+
             //Get the MMI data for each computer.
             await Task.Run(() =>
             {
@@ -82,7 +116,7 @@ namespace DomainTricks_WPF.Services
                 {
                     try
                     {
-                        ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, PropertiesArray, ClassName, FilterName, auth).Result;
+                        ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, propertiesArray, className, filterName, auth).Result;
                         newComputers.Add(newComputerWithMMI);
                     }
                     catch (Exception ex)
@@ -95,6 +129,7 @@ namespace DomainTricks_WPF.Services
 
             return newComputers;
         }
+
         private async Task<ComputerModel> GetComputerWithInstances(ILogger logger,
             ComputerModel computer,
             string[] propertiesArray,
