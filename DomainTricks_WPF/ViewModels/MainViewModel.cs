@@ -57,7 +57,7 @@ public class MainViewModel
         List<ComputerModel> computersList = await computers.GetComputers(domainPath);
         foreach (ComputerModel computer in computersList)
         {
-            Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances");
+            Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f") }");
         }
     }
 

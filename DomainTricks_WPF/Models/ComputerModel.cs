@@ -13,8 +13,10 @@ public class ComputerModel : ModelBase
 {
     private Guid _id;
     private string? _name;
-    
-    public Guid Id { get { return _id; }  }
+    // When was this computer last reached over MMI.  Null if never.
+    private DateTime? _dateLastSeen;
+
+    public Guid Id { get { return _id; } }
     public string? Name
     {
         get { return _name; }
@@ -26,6 +28,16 @@ public class ComputerModel : ModelBase
     }
 
     public List<string>? OUList { get; set; }
+
+    public DateTime? DateLastSeen
+    {
+        get { return _dateLastSeen; }
+        set
+        {
+            _dateLastSeen = value;
+            OnPropertyChanged(nameof(_dateLastSeen));
+        }
+    }
 
     // checks if this ComputerModel points to the computer it is running on
     public static bool IsLocalComputer(string computerName)
