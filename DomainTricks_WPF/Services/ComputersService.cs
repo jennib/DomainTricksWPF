@@ -13,15 +13,15 @@ namespace DomainTricks_WPF.Services
     public class ComputersService
     {
 
-        public  ComputersService(ILogger logger)
+        public ComputersService(ILogger logger)
         {
             Log.Logger = logger;
         }
-      
+
 
         public async Task<List<ComputerModel>> GetComputers(string domainPath)
         {
-            List<ComputerModel> computers = new ();
+            List<ComputerModel> computers = new();
 
             // Setup the authentication credentials
             AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
@@ -44,52 +44,67 @@ namespace DomainTricks_WPF.Services
             string ClassName = "Win32_ComputerSystem"; //"Win32_ComputerSystem";
             string FilterName = "";
 
+            List<ComputerModel> newComputers = new();
+
             //Get the MMI data for each computer.
-            for (int i = 0; i < computers.Count; i++)
+            await Task.Run(() =>
             {
-                try
+                Parallel.ForEach<ComputerModel>(computers, (computer) =>
                 {
-                    ComputerModel newComputerWithMMI = await GetComputerWithInstances(Log.Logger, computers[i], PropertiesArray, ClassName, FilterName, auth);
-                    computers[i] = newComputerWithMMI;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error($"Error getting MMI data for {computers[i].Name}.  Error: {ex.Message}");
-                }
-            }
-            return computers;
+                    try
+                    {
+                        ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, PropertiesArray, ClassName, FilterName, auth).Result;
+                        newComputers.Add(newComputerWithMMI);
+                    }
+                    catch (Exception ex)
+                    {
+                        newComputers.Add(computer);
+                        Log.Error($"Error getting MMI data for {computer.Name}.  Error: {ex.Message}");
+                    }
+                });
+            });
+
+            return newComputers;
         }
-        
-        private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger,List<ComputerModel> computers, AuthenticationModel auth)
+
+        private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger, List<ComputerModel> computers, AuthenticationModel auth)
         {
             string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
             string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
             string FilterName = "DriveType=3";
-            
+
+            List<ComputerModel> newComputers = new();
+
             //Get the MMI data for each computer.
-            for (int i = 0; i < computers.Count; i++)
+            await Task.Run(() =>
             {
-                try
+                Parallel.ForEach<ComputerModel>(computers, (computer) =>
                 {
-                    ComputerModel newComputerWithMMI = await GetComputerWithInstances(Log.Logger, computers[i], PropertiesArray, ClassName, FilterName, auth);
-                    computers[i] = newComputerWithMMI;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error($"Error getting MMI data for {computers[i].Name}.  Error: {ex.Message}");
-                }
-            }
-            return computers;
+                    try
+                    {
+                        ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, PropertiesArray, ClassName, FilterName, auth).Result;
+                        newComputers.Add(newComputerWithMMI);
+                    }
+                    catch (Exception ex)
+                    {
+                        newComputers.Add(computer);
+                        Log.Error($"Error getting MMI data for {computer.Name}.  Error: {ex.Message}");
+                    }
+                });
+            });
+
+            return newComputers;
         }
-        private async Task<ComputerModel> GetComputerWithInstances(ILogger logger, 
-            ComputerModel computer, 
+        private async Task<ComputerModel> GetComputerWithInstances(ILogger logger,
+            ComputerModel computer,
             string[] propertiesArray,
             string className,
             string filterName,
             AuthenticationModel auth)
         {
             // No name, no joy.
-            if (string.IsNullOrEmpty(computer.Name)) {
+            if (string.IsNullOrEmpty(computer.Name))
+            {
                 throw new Exception("Computer name is null or empty.");
             }
 
@@ -108,7 +123,7 @@ namespace DomainTricks_WPF.Services
             }
             catch (Exception ex)
             {
-               // Log.Error(ex, "Exception from mmiService: {0}", ex.Message);
+                // Log.Error(ex, "Exception from mmiService: {0}", ex.Message);
                 throw;
             }
 

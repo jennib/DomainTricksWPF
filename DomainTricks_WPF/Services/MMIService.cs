@@ -77,7 +77,7 @@ public class MMIService
         }
 
         // MMI Search Timeout.
-        SessionOptions.Timeout = new TimeSpan(0, 0, 2);
+        SessionOptions.Timeout = new TimeSpan(0, 0, 1);
 
         string nameSpace = @"root\cimv2";
 
