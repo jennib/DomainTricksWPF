@@ -77,7 +77,7 @@ public class MMIService
         }
 
         // MMI Search Timeout.
-        SessionOptions.Timeout = new TimeSpan(0, 0, 10);
+        SessionOptions.Timeout = new TimeSpan(0, 0, 2);
 
         string nameSpace = @"root\cimv2";
 
@@ -92,8 +92,14 @@ public class MMIService
 
         CimSession session = CimSession.Create(ComputerName, SessionOptions);
         CimInstanceWatcher instanceWatcher = new();
-        CimAsyncMultipleResults<CimInstance> multiResult = session.QueryInstancesAsync(nameSpace, "WQL", mmiQuery);
-        multiResult.Subscribe(instanceWatcher);
+        try
+        {
+            CimAsyncMultipleResults<CimInstance> multiResult = session.QueryInstancesAsync(nameSpace, "WQL", mmiQuery);
+            multiResult.Subscribe(instanceWatcher);
+        } catch (Exception ex)
+        {
+            throw;
+        }
 
         // Wait for the results.
         while (instanceWatcher.IsFinsihed == false && instanceWatcher.IsError == false)

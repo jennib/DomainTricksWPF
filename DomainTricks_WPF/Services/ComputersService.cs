@@ -27,15 +27,40 @@ namespace DomainTricks_WPF.Services
             ADService adService = new ADService(Log.Logger);
             computers = await adService.GetListOfComputersFromADAsync(domainPath);
 
+            computers = await GetComputers_Win32_LogicalDisks(Log.Logger,computers);
+            ////Get the MMI data for each computer.
+            //for (int i = 0; i < computers.Count; i++)
+            //{
+            //    try {
+            //        AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+            //        string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
+            //        string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
+            //        string FilterName = "DriveType=3";
+            //        ComputerModel newComputerWithMMI = await GetComputerWithInstances(Log.Logger, computers[i],PropertiesArray,ClassName,FilterName,auth);
+            //        computers[i] = newComputerWithMMI;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Log.Error($"Error getting MMI data for {computers[i].Name}.  Error: {ex.Message}");
+            //    }
+            //}
+
+            return computers;
+        }
+
+        private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger,List<ComputerModel> computers)
+        {
+            string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
+            string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
+            string FilterName = "DriveType=3";
+            AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+            
             //Get the MMI data for each computer.
             for (int i = 0; i < computers.Count; i++)
             {
-                try {
-                    AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
-                    string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
-                    string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
-                    string FilterName = "DriveType=3";
-                    ComputerModel newComputerWithMMI = await GetComputersWithInstances(Log.Logger, computers[i],PropertiesArray,ClassName,FilterName,auth);
+                try
+                {
+                    ComputerModel newComputerWithMMI = await GetComputerWithInstances(Log.Logger, computers[i], PropertiesArray, ClassName, FilterName, auth);
                     computers[i] = newComputerWithMMI;
                 }
                 catch (Exception ex)
@@ -43,12 +68,9 @@ namespace DomainTricks_WPF.Services
                     Log.Error($"Error getting MMI data for {computers[i].Name}.  Error: {ex.Message}");
                 }
             }
-
             return computers;
         }
-
-
-        private async Task<ComputerModel> GetComputersWithInstances(ILogger logger, 
+        private async Task<ComputerModel> GetComputerWithInstances(ILogger logger, 
             ComputerModel computer, 
             string[] propertiesArray,
             string className,
@@ -82,7 +104,7 @@ namespace DomainTricks_WPF.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Exception in TestMMI: {0}", ex.Message);
+               // Log.Error(ex, "Exception from mmiService: {0}", ex.Message);
                 throw;
             }
 
