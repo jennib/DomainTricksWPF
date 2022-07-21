@@ -31,7 +31,11 @@ namespace DomainTricks_WPF.Services
             for (int i = 0; i < computers.Count; i++)
             {
                 try {
-                    ComputerModel newComputerWithMMI = await GetWin32_LogicalDisk(Log.Logger, computers[i]);
+                    AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+                    string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
+                    string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
+                    string FilterName = "DriveType=3";
+                    ComputerModel newComputerWithMMI = await GetComputersWithInstances(Log.Logger, computers[i],PropertiesArray,ClassName,FilterName,auth);
                     computers[i] = newComputerWithMMI;
                 }
                 catch (Exception ex)
@@ -43,22 +47,32 @@ namespace DomainTricks_WPF.Services
             return computers;
         }
 
-        private async Task<ComputerModel> GetWin32_LogicalDisk(ILogger logger, ComputerModel computer)
+
+        private async Task<ComputerModel> GetComputersWithInstances(ILogger logger, 
+            ComputerModel computer, 
+            string[] propertiesArray,
+            string className,
+            string filterName,
+            AuthenticationModel auth)
         {
             // Prepare to call MMIService.
             //string computerName = "RELIC-PC";
-            AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
-            // AuthenticationModel auth = new();
-            string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
-            string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
-            string FilterName = "DriveType=3";
+            //AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+            //string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
+            //string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
+            //string FilterName = "DriveType=3";
+            
+            // No name, no joy.
+            if (string.IsNullOrEmpty(computer.Name)) {
+                throw new Exception("Computer name is null or empty.");
+            }
 
             MMIService mmiService = new(logger, computer.Name)
             {
                 Authentication = auth,
-                PropertiesArray = PropertiesArray,
-                ClassName = ClassName,
-                FilterName = FilterName
+                PropertiesArray = propertiesArray,
+                ClassName = className,
+                FilterName = filterName
             };
 
             // Call the MMIService .
@@ -83,7 +97,7 @@ namespace DomainTricks_WPF.Services
             else
             {
                 // Add to the ComputerMOdel.
-                computer.InstancesDictionary.Add(ClassName, mmiService.Instances);
+                computer.InstancesDictionary.Add(className, mmiService.Instances);
 
 
                 // Log the results.
@@ -94,9 +108,9 @@ namespace DomainTricks_WPF.Services
 
                     // If we asked for only some properties, then we can query for only those properties.
                     // Also check that PropertiesArray does not contain "*" which is the wildcard search, asks for everything.
-                    if (PropertiesArray?.Length > 0 && Array.Exists(PropertiesArray, element => element != "*"))
+                    if (propertiesArray?.Length > 0 && Array.Exists(propertiesArray, element => element != "*"))
                     {
-                        foreach (string property in PropertiesArray)
+                        foreach (string property in propertiesArray)
                         {
                             Log.Verbose($"{property} = {instance.CimInstanceProperties[property].Value}");
                         }
