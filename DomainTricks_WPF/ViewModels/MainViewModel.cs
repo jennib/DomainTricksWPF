@@ -22,7 +22,7 @@ public class MainViewModel
         Log.Information("MainViewModel start.");
 
         // Test Timer
-        TestTimer(logger);
+        //TestTimer(logger);
 
         // Test the ComputersService
         Log.Information("Testing the ComputersService.");

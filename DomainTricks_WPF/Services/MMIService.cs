@@ -92,15 +92,9 @@ public class MMIService
 
         CimSession session = CimSession.Create(ComputerName, SessionOptions);
         CimInstanceWatcher instanceWatcher = new();
-        try
-        {
             CimAsyncMultipleResults<CimInstance> multiResult = session.QueryInstancesAsync(nameSpace, "WQL", mmiQuery);
             multiResult.Subscribe(instanceWatcher);
-        } catch (Exception ex)
-        {
-            throw;
-        }
-
+        
         // Wait for the results.
         while (instanceWatcher.IsFinsihed == false && instanceWatcher.IsError == false)
         {
@@ -115,7 +109,7 @@ public class MMIService
         {
             IsError = true;
             ErrorMessage = instanceWatcher.ErrorMessage;
-            Log.Error("Error: {0}", instanceWatcher.ErrorMessage);
+            Log.Error("Error: {0}", instanceWatcher.ErrorMessage  );
             throw new Exception(instanceWatcher.ErrorMessage);
         }
         else
@@ -130,6 +124,7 @@ public class MMIService
     }
 
 }
+
 
 /// <summary>
 /// Observes a MMI instance to allow for aync 
@@ -149,17 +144,20 @@ class CimInstanceWatcher : IObserver<CimInstance>
         IsError = false;
         Instances = new List<CimInstance>();
     }
+
     public void OnCompleted()
     {
         IsFinsihed = true;
         Log.Information("Done");
     }
-
+    
     public void OnError(Exception e)
     {
         IsError = true;
         ErrorMessage = e.Message;
-        Log.Information("Error: " + e.Message);
+        Log.Error("Error: " + e.Message);
+        //CimException cex = e as CimException;
+        //Log.Error("NativeCode: " + cex.ErrorData);
     }
 
     public void OnNext(CimInstance value)
@@ -168,5 +166,6 @@ class CimInstanceWatcher : IObserver<CimInstance>
         //Log.Information("Value: " + value);
     }
 }
+
 
 

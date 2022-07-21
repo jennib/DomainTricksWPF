@@ -23,37 +23,48 @@ namespace DomainTricks_WPF.Services
         {
             List<ComputerModel> computers = new ();
 
+            // Setup the authentication credentials
+            AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+
             // Get a list of Computers from the Directory.
             ADService adService = new ADService(Log.Logger);
             computers = await adService.GetListOfComputersFromADAsync(domainPath);
 
-            computers = await GetComputers_Win32_LogicalDisks(Log.Logger,computers);
-            ////Get the MMI data for each computer.
-            //for (int i = 0; i < computers.Count; i++)
-            //{
-            //    try {
-            //        AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
-            //        string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
-            //        string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
-            //        string FilterName = "DriveType=3";
-            //        ComputerModel newComputerWithMMI = await GetComputerWithInstances(Log.Logger, computers[i],PropertiesArray,ClassName,FilterName,auth);
-            //        computers[i] = newComputerWithMMI;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Log.Error($"Error getting MMI data for {computers[i].Name}.  Error: {ex.Message}");
-            //    }
-            //}
+            computers = await GetComputers_Win32_LogicalDisks(Log.Logger,computers,auth);
+
+            computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers, auth);
+
 
             return computers;
         }
 
-        private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger,List<ComputerModel> computers)
+        private async Task<List<ComputerModel>> GetComputers_Win32_ComputerSystem(ILogger logger, List<ComputerModel> computers, AuthenticationModel auth)
+        {
+            string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
+            string ClassName = "Win32_ComputerSystem"; //"Win32_ComputerSystem";
+            string FilterName = "";
+
+            //Get the MMI data for each computer.
+            for (int i = 0; i < computers.Count; i++)
+            {
+                try
+                {
+                    ComputerModel newComputerWithMMI = await GetComputerWithInstances(Log.Logger, computers[i], PropertiesArray, ClassName, FilterName, auth);
+                    computers[i] = newComputerWithMMI;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Error getting MMI data for {computers[i].Name}.  Error: {ex.Message}");
+                }
+            }
+            return computers;
+        }
+        
+        private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger,List<ComputerModel> computers, AuthenticationModel auth)
         {
             string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
             string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
             string FilterName = "DriveType=3";
-            AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
             
             //Get the MMI data for each computer.
             for (int i = 0; i < computers.Count; i++)
@@ -77,13 +88,6 @@ namespace DomainTricks_WPF.Services
             string filterName,
             AuthenticationModel auth)
         {
-            // Prepare to call MMIService.
-            //string computerName = "RELIC-PC";
-            //AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
-            //string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
-            //string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
-            //string FilterName = "DriveType=3";
-            
             // No name, no joy.
             if (string.IsNullOrEmpty(computer.Name)) {
                 throw new Exception("Computer name is null or empty.");
