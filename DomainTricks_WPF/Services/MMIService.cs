@@ -40,10 +40,17 @@ public class MMIService
         Log.Logger = logger;
     }
     
-    public static async Task<bool> TestConnection(string computerName)
+    public  async Task<bool> TestConnection()
     {
-        CimSessionOptions SessionOptions = new();
-        CimSession session = CimSession.Create(computerName, SessionOptions);
+        CimSessionOptions sessionOptions = new() { Timeout = TimeSpan.FromSeconds(1)};
+        // Use UserName and Password if they exit.
+        if (Authentication is not null && Authentication?.UserName is not null && Authentication?.Password is not null)
+        {
+            // create Credentials.
+            CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
+            sessionOptions.AddDestinationCredentials(Credentials);
+        }
+        CimSession session = CimSession.Create(ComputerName, sessionOptions);
         bool result = false;
         try
         {
@@ -51,7 +58,7 @@ public class MMIService
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error testing connection to {ComputerName}", computerName);
+            Log.Error(ex, "Error testing connection to {ComputerName}", ComputerName);
             return false;
         }
 
@@ -81,7 +88,7 @@ public class MMIService
 
         WSManSessionOptions SessionOptions = new();
 
-        // Authnetication is not supported on the local computer.
+        // Authentication is not supported on the local computer.
         if (ComputerModel.IsLocalComputer(ComputerName) == false)
         {
             // Use UserName and Password if they exit.
@@ -100,12 +107,12 @@ public class MMIService
 
         string mmiQuery = "SELECT " + propertiesString + " FROM " + ClassName;
         
-        // Append the filter if one exsits.
+        // Append the filter if one exists.
         if (string.IsNullOrEmpty(FilterName) == false)
         {
             mmiQuery += $" WHERE {FilterName}";
         }
-        Log.Information($"MMI Query: {mmiQuery}");
+        Log.Information($"{ComputerName} MMI Query: {mmiQuery}");
 
         CimSession session = CimSession.Create(ComputerName, SessionOptions);
         CimInstanceWatcher instanceWatcher = new();

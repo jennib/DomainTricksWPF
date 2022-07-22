@@ -33,7 +33,8 @@ namespace DomainTricks_WPF.Services
             for (int i = 0; i < computers.Count; i++)
             {
                 Log.Information($"Testing Computer {i.ToString()} {computers[i].Name}");
-                bool isTestSuccessful = await MMIService.TestConnection(computers[i].Name);
+                MMIService mmiService = new(Log.Logger,computers[i].Name);
+                bool isTestSuccessful = await mmiService.TestConnection();
                 Log.Information($"{computers[i].Name} tests: {isTestSuccessful}");
                 if (isTestSuccessful)
                 {
@@ -44,7 +45,6 @@ namespace DomainTricks_WPF.Services
             computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers, auth);
 
             computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers, auth);
-
 
             return computers;
         }
@@ -121,9 +121,11 @@ namespace DomainTricks_WPF.Services
                 throw new Exception("Computer name is null or empty.");
             }
 
+            Log.Information($"{computer.DateLastSeen?.AddMinutes(5).ToString("f")} {DateTime.Now.ToString("f")}");
             // Check to see if the computer tested online in the last minute
-            if (computer.DateLastSeen?.AddMinutes(1) > DateTime.Now)
+            if (computer.DateLastSeen is null || computer.DateLastSeen?.AddMinutes(5) < DateTime.Now)
             {
+                Log.Information($"Skipping {computer.Name}  because it was tested online in the last 5 minutes.");
                 return computer;
             }
 
