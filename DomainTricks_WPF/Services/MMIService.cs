@@ -39,7 +39,24 @@ public class MMIService
         ComputerName = computerName;
         Log.Logger = logger;
     }
+    
+    public static async Task<bool> TestConnection(string computerName)
+    {
+        CimSessionOptions SessionOptions = new();
+        CimSession session = CimSession.Create(computerName, SessionOptions);
+        bool result = false;
+        try
+        {
+             result = session.TestConnection();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error testing connection to {ComputerName}", computerName);
+            return false;
+        }
 
+        return result;
+    }
     public async Task Execute()
     {
         // Generate the properties string if Peroperties is not null.

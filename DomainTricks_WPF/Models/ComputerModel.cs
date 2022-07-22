@@ -39,6 +39,12 @@ public class ComputerModel : ModelBase
         }
     }
 
+    public string? OperatingSystem { get; set; }
+    public string? OperatingSystemVersion { get; set; }
+    public string? DNSHostName { get; set; }
+    
+    
+
     // checks if this ComputerModel points to the computer it is running on
     public static bool IsLocalComputer(string computerName)
     {

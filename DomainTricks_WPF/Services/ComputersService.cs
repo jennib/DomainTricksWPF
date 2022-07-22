@@ -30,7 +30,18 @@ namespace DomainTricks_WPF.Services
             ADService adService = new ADService(Log.Logger);
             computers = await adService.GetListOfComputersFromADAsync(domainPath);
 
-            computers = await GetComputers_Win32_LogicalDisks(Log.Logger,computers,auth);
+            for (int i = 0; i < computers.Count; i++)
+            {
+                Log.Information($"Testing Computer {i.ToString()} {computers[i].Name}");
+                bool isTestSuccessful = await MMIService.TestConnection(computers[i].Name);
+                Log.Information($"{computers[i].Name} tests: {isTestSuccessful}");
+                if (isTestSuccessful)
+                {
+                    computers[i].DateLastSeen = DateTime.Now;
+                }
+            }
+
+            computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers, auth);
 
             computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers, auth);
 
@@ -59,14 +70,14 @@ namespace DomainTricks_WPF.Services
             string FilterName = "DriveType=3";
 
             List<ComputerModel> newComputers = new();
-            
+
             //Get the MMI data for each computer.
             newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
 
             return newComputers;
         }
 
-        private async Task<List<ComputerModel>> GetListOfComputersWithInstances(ILogger logger, 
+        private async Task<List<ComputerModel>> GetListOfComputersWithInstances(ILogger logger,
             List<ComputerModel> computers,
             string[] propertiesArray,
             string className,
@@ -83,7 +94,7 @@ namespace DomainTricks_WPF.Services
                     try
                     {
                         ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, propertiesArray, className, filterName, auth).Result;
-                        newComputerWithMMI.DateLastSeen = DateTime.Now;
+                        // newComputerWithMMI.DateLastSeen = DateTime.Now;  Moved to TestConnection to allow for pre-check
                         newComputers.Add(newComputerWithMMI);
                     }
                     catch (Exception ex)
@@ -108,6 +119,12 @@ namespace DomainTricks_WPF.Services
             if (string.IsNullOrEmpty(computer.Name))
             {
                 throw new Exception("Computer name is null or empty.");
+            }
+
+            // Check to see if the computer tested online in the last minute
+            if (computer.DateLastSeen?.AddMinutes(1) > DateTime.Now)
+            {
+                return computer;
             }
 
             MMIService mmiService = new(logger, computer.Name)

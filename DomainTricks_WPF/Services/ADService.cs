@@ -25,7 +25,7 @@ public class ADService
         DomainService domainService = new(Log.Logger);
         //string domainPath = "LDAP://DC=tuttistudios,DC=com";
         string filter = ("(&(objectClass=computer)(primaryGroupID=515))");
-        string[] propertiesToReturn = { "dNSHostName", "OU", "distinguishedName" };
+        string[] propertiesToReturn = { "dNSHostName", "distinguishedName", "operatingSystem", "operatingSystemVersion" };
         SearchResultCollection searchResults;
 
         try
@@ -42,6 +42,14 @@ public class ADService
 
         foreach (SearchResult result in searchResults)
         {
+
+            Log.Information($" operatingSystem = {result.GetPropertyValue("operatingSystem")}");
+            string operatingSystem = result.GetPropertyValue("operatingSystem");
+            if (string.IsNullOrEmpty(operatingSystem))
+            {
+                continue;
+            }
+                     
             //Log.Information($"-result {result.GetPropertyValue("DisplayName")}");
             Log.Information($" DistinguishedName = {result.GetPropertyValue("distinguishedname")}");
             string distinguishedName = result.GetPropertyValue("distinguishedname");
@@ -61,8 +69,19 @@ public class ADService
                     ouList.Add(sub.Substring(3));
                 }
             }
+
+            Log.Information($" dNSHostName = {result.GetPropertyValue("dNSHostName")}");
+            string dNSHostName = result.GetPropertyValue("dNSHostName");
+            
+            Log.Information($" operatingSystemVersion = {result.GetPropertyValue("operatingSystemVersion")}");
+            string operatingSystemVersion = result.GetPropertyValue("operatingSystemVersion");
+
             ComputerModel computer = new(computerName, Log.Logger);
+            
             computer.OUList = ouList;
+            computer.OperatingSystem = operatingSystem;
+            computer.OperatingSystemVersion = operatingSystemVersion;
+            computer.DNSHostName = dNSHostName;
             ListOfComputers.Add(computer);
         }
 
