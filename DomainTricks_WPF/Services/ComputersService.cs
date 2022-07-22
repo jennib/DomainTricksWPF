@@ -30,17 +30,33 @@ namespace DomainTricks_WPF.Services
             ADService adService = new ADService(Log.Logger);
             computers = await adService.GetListOfComputersFromADAsync(domainPath);
 
-            for (int i = 0; i < computers.Count; i++)
+
+            await Task.Run(() =>
             {
-                Log.Information($"Testing Computer {i.ToString()} {computers[i].Name}");
-                MMIService mmiService = new(Log.Logger,computers[i].Name);
-                bool isTestSuccessful = await mmiService.TestConnection();
-                Log.Information($"{computers[i].Name} tests: {isTestSuccessful}");
-                if (isTestSuccessful)
+                Parallel.ForEach<ComputerModel>(computers, (computer) =>
                 {
-                    computers[i].DateLastSeen = DateTime.Now;
-                }
-            }
+                    Log.Information($"Testing Computer {computer.Name}");
+                    MMIService mmiService = new(Log.Logger, computer.Name);
+                    bool isTestSuccessful = mmiService.TestConnection().Result;
+                    Log.Information($"{computer.Name} tests: {isTestSuccessful}");
+                    if (isTestSuccessful)
+                    {
+                        computer.DateLastSeen = DateTime.Now;
+                    }
+                });
+            });
+
+            //for (int i = 0; i < computers.Count; i++)
+            //{
+            //    Log.Information($"Testing Computer {i.ToString()} {computers[i].Name}");
+            //    MMIService mmiService = new(Log.Logger, computers[i].Name);
+            //    bool isTestSuccessful = await mmiService.TestConnection();
+            //    Log.Information($"{computers[i].Name} tests: {isTestSuccessful}");
+            //    if (isTestSuccessful)
+            //    {
+            //        computers[i].DateLastSeen = DateTime.Now;
+            //    }
+            //}
 
             computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers, auth);
 
