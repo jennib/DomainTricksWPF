@@ -172,7 +172,7 @@ class CimInstanceWatcher : IObserver<CimInstance>
     public void OnCompleted()
     {
         IsFinsihed = true;
-        Log.Information("Done");
+        Log.Verbose("CimInstanceWatcher is Done");
     }
     
     public void OnError(Exception e)

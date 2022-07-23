@@ -24,12 +24,17 @@
                           InputGestureText="Alt+F4"/>
             </MenuItem>
             <MenuItem Header="_Run">
-                <MenuItem Header="Run _Job" Command="{Binding RunFromMenuCommand}"/>
-                <MenuItem Header="Paused" IsCheckable="True" IsChecked="{Binding IsPaused}" Command="{Binding PauseProcessing}" Name="pauseMenu"/>
+                <MenuItem Header="Run _Job"  Command="{Binding MenuClickedCommand}" 
+                          CommandParameter="Run"/>
+                <MenuItem Header="Paused" IsCheckable="True" IsChecked="{Binding IsPaused}" 
+                           Command="{Binding MenuClickedCommand}" 
+                          CommandParameter="PauseProcessing" 
+                          Name="pauseMenu"/>
             </MenuItem>
             <MenuItem Header="_Tools">
                 <MenuItem Header="_Preferences" 
-                          Command="{Binding OpenPreferencesCommand}" />
+                           Command="{Binding MenuClickedCommand}" 
+                          CommandParameter="Preferences" />
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_View Help" Name="Help" 

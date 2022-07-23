@@ -32,7 +32,7 @@ public partial class App : Application
         Log.Information("============= Starting App. =============");
 
         // Setup and Show the Main Window
-        appWindow = new(new MainViewModel(Logger));
+        appWindow = new(Logger,new MainViewModel(Logger));
         //appWindow.DataContext = new MainViewModel(Logger);
         appWindow.Show();
     }

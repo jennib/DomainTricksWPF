@@ -1,4 +1,5 @@
 ﻿using DomainTricks_WPF.ViewModels;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ public class MenuClickedCommand : ICommand
     public event EventHandler? CanExecuteChanged;
 
     public MainViewModel ViewModel { get; set; }
-    public MenuClickedCommand(MainViewModel ViewMOdel)
+    public MenuClickedCommand(ILogger logger, MainViewModel ViewMOdel)
     {
         this.ViewModel = ViewMOdel;
     }
@@ -25,6 +26,9 @@ public class MenuClickedCommand : ICommand
     
     public void Execute(object? parameter)
     {
-        this.ViewModel.MenuClickedCommandAction();
+        if (parameter is string)
+        {
+            this.ViewModel.MenuClickedCommandAction(parameter as string);
+        }
     }
 }

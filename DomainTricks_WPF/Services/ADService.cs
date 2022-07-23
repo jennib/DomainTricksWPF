@@ -43,7 +43,7 @@ public class ADService
         foreach (SearchResult result in searchResults)
         {
 
-            Log.Information($" operatingSystem = {result.GetPropertyValue("operatingSystem")}");
+            Log.Verbose($" operatingSystem = {result.GetPropertyValue("operatingSystem")}");
             string operatingSystem = result.GetPropertyValue("operatingSystem");
             if (string.IsNullOrEmpty(operatingSystem))
             {
@@ -51,7 +51,7 @@ public class ADService
             }
                      
             //Log.Information($"-result {result.GetPropertyValue("DisplayName")}");
-            Log.Information($" DistinguishedName = {result.GetPropertyValue("distinguishedname")}");
+            Log.Verbose($" DistinguishedName = {result.GetPropertyValue("distinguishedname")}");
             string distinguishedName = result.GetPropertyValue("distinguishedname");
 
             // Extract Computer Name and OU from DitinguishedName.
@@ -59,7 +59,7 @@ public class ADService
             // Computer name.
             string? computerName = Array.Find(componentArray, n => n.StartsWith("CN="));
             computerName = computerName?.Substring(3);
-            Log.Information($"Computer name is: {computerName}");
+            Log.Verbose($"Computer name is: {computerName}");
             // OUs
             List<string>? ouList = new();
             foreach (string sub in componentArray)
@@ -70,10 +70,10 @@ public class ADService
                 }
             }
 
-            Log.Information($" dNSHostName = {result.GetPropertyValue("dNSHostName")}");
+            Log.Verbose($" dNSHostName = {result.GetPropertyValue("dNSHostName")}");
             string dNSHostName = result.GetPropertyValue("dNSHostName");
             
-            Log.Information($" operatingSystemVersion = {result.GetPropertyValue("operatingSystemVersion")}");
+            Log.Verbose($" operatingSystemVersion = {result.GetPropertyValue("operatingSystemVersion")}");
             string operatingSystemVersion = result.GetPropertyValue("operatingSystemVersion");
 
             ComputerModel computer = new(computerName, Log.Logger);

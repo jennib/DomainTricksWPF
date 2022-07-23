@@ -22,15 +22,16 @@ namespace DomainTricks_WPF;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow(object dataContext)
+    public MainWindow(ILogger logger, object dataContext)
     {
         this.DataContext = dataContext;
+        Log.Logger = logger;
         InitializeComponent();
     }
     
        private void OnLoaded(object sender, RoutedEventArgs e)
     {
        
-        Debug.WriteLine("Main Window Loaded.");
+        Log.Verbose("Main Window Loaded.");
     }
 }

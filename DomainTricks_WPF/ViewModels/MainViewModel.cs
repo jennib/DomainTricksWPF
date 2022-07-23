@@ -10,6 +10,7 @@ using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DomainTricks_WPF.ViewModels;
 
@@ -17,13 +18,22 @@ public class MainViewModel : ViewModelBase
 {
     public string? Title { get; set; } = "Domain Tricks";
 
-    public MenuClickedCommand   MenuClickedCommand { get; set; }
+    public MenuClickedCommand MenuClickedCommand { get; set; }
+
+    public bool IsPaused { get; set; } = false;
+    public Visibility ProgressBarShouldBeVisible { get; set; } = Visibility.Hidden;
+
+    public int ProgressBarMaximum { get; set; } = 100;
+    public int ProgressBarPercent { get; set; } = 100;
+    
+    public string? FilterString { get; set; } = string.Empty;
+    public string? StatusBarText { get; set; } = string.Empty;
     public MainViewModel(ILogger logger)
     {
-        this.MenuClickedCommand = new MenuClickedCommand(this);
-
         Log.Logger = logger;
         Log.Information("MainViewModel start.");
+
+        this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
         // Test Timer
         //TestTimer(logger);
@@ -51,7 +61,7 @@ public class MainViewModel : ViewModelBase
 
     }
 
-      // Test the ComputersService.
+    // Test the ComputersService.
     public async void TestComputersService(ILogger logger)
     {
         DomainService domainService = new(logger);
@@ -61,7 +71,7 @@ public class MainViewModel : ViewModelBase
         List<ComputerModel> computersList = await computers.GetComputers(domainPath);
         foreach (ComputerModel computer in computersList)
         {
-            Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f") }");
+            Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
         }
     }
 
@@ -74,7 +84,7 @@ public class MainViewModel : ViewModelBase
         task.Start();
 
         await Task.Delay(TimeSpan.FromSeconds(10));
-         await task.StopAsync();
+        await task.StopAsync();
     }
 
     // Test the Domain Service call
@@ -164,9 +174,33 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    public void MenuClickedCommandAction()
+    public void MenuClickedCommandAction(string? parameter)
     {
-        Log.Information("MenuClickedCommandAction");
+        Log.Information($"MenuClickedCommandAction {parameter}");
+        switch (parameter)
+        {
+            case "About":
+                Log.Information("About");
+                break;
+            case "Exit":
+                Log.Information("Exit");
+                break;
+            case "Preferences":
+                Log.Information("Preferences");
+                break; 
+            case "Help":
+                Log.Information("Help");
+                break;
+            case "Run":
+                Log.Information("Run");
+                break;
+            case "PauseProcessing":
+                Log.Information("PauseProcessing");
+                break;
+            default:
+                Log.Information("Unknown");
+                break;
+        }
     }
 }
 
