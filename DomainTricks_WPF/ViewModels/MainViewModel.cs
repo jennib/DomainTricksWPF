@@ -14,6 +14,7 @@ namespace DomainTricks_WPF.ViewModels;
 
 public class MainViewModel
 {
+    public string? Title { get; set; } = "Domain Tricks";
     public MainViewModel(ILogger logger)
     {
 
@@ -45,6 +46,11 @@ public class MainViewModel
         //TestMMI(logger, computer);
 
 
+    }
+
+    public void MenuClickedCommand(object sender)
+    {
+        
     }
 
     // Test the ComputersService.

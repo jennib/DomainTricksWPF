@@ -27,9 +27,8 @@ public partial class MainWindow : Window
         this.DataContext = dataContext;
         InitializeComponent();
     }
-
-
-    private void OnLoaded(object sender, RoutedEventArgs e)
+    
+       private void OnLoaded(object sender, RoutedEventArgs e)
     {
        
         Debug.WriteLine("Main Window Loaded.");

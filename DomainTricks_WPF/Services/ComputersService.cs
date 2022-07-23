@@ -46,18 +46,6 @@ namespace DomainTricks_WPF.Services
                 });
             });
 
-            //for (int i = 0; i < computers.Count; i++)
-            //{
-            //    Log.Information($"Testing Computer {i.ToString()} {computers[i].Name}");
-            //    MMIService mmiService = new(Log.Logger, computers[i].Name);
-            //    bool isTestSuccessful = await mmiService.TestConnection();
-            //    Log.Information($"{computers[i].Name} tests: {isTestSuccessful}");
-            //    if (isTestSuccessful)
-            //    {
-            //        computers[i].DateLastSeen = DateTime.Now;
-            //    }
-            //}
-
             computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers, auth);
 
             computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers, auth);
