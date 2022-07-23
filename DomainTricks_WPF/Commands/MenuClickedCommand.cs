@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace DomainTricks_WPF.Commands;
 
-public class MenuClickedCommand : ICommand
+public class MenuClickedCommand : CommandBase
 {
     public event EventHandler? CanExecuteChanged;
 
@@ -24,11 +24,12 @@ public class MenuClickedCommand : ICommand
         return true;
     }
     
-    public void Execute(object? parameter)
+    public override void Execute(object? parameter)
     {
         if (parameter is string)
         {
             this.ViewModel.MenuClickedCommandAction(parameter as string);
         }
     }
+
 }
