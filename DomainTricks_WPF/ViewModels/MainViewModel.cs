@@ -6,34 +6,55 @@ using Serilog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.DirectoryServices;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 
 namespace DomainTricks_WPF.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    public string? Title { get; set; } = "Domain Tricks";
+    // The main list of Computers
+    private List<ComputerModel> _computers = new();
+    public List<ComputerModel> Computers
+    {
+        get { return _computers; }
+        set
+        {
+            _computers = value;
+            OnPropertyChanged(nameof(Computers));
+        }
+    }
 
-    public MenuClickedCommand MenuClickedCommand { get; set; }
+    public string? Title { get; set; } = "Domain Tricks";
+    public string? StatusBarText { get; set; } = string.Empty;
 
     public bool IsPaused { get; set; } = false;
     public Visibility ProgressBarShouldBeVisible { get; set; } = Visibility.Hidden;
 
     public int ProgressBarMaximum { get; set; } = 100;
     public int ProgressBarPercent { get; set; } = 100;
-    
+
     public string? FilterString { get; set; } = string.Empty;
-    public string? StatusBarText { get; set; } = string.Empty;
+
+    public MenuClickedCommand MenuClickedCommand { get; set; }
+
     public MainViewModel(ILogger logger)
     {
         Log.Logger = logger;
         Log.Information("MainViewModel start.");
 
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
+
+        ComputerModel StartComputer = new("Loading", logger);
+        List<ComputerModel> StartComputerList = new() {
+            StartComputer
+        };
+        Computers = StartComputerList;
 
         // Test Timer
         //TestTimer(logger);
@@ -61,6 +82,8 @@ public class MainViewModel : ViewModelBase
 
     }
 
+
+
     // Test the ComputersService.
     public async void TestComputersService(ILogger logger)
     {
@@ -73,6 +96,7 @@ public class MainViewModel : ViewModelBase
         {
             Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
         }
+        this.Computers = computersList;
     }
 
     // Test the Timer in BackgroundTask
@@ -187,7 +211,7 @@ public class MainViewModel : ViewModelBase
                 break;
             case "Preferences":
                 Log.Information("Preferences");
-                break; 
+                break;
             case "Help":
                 Log.Information("Help");
                 break;
