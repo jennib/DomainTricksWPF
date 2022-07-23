@@ -94,21 +94,26 @@
         </StatusBar>
         <Grid>
             <ScrollViewer>
+                
+                <!-- List of Computers -->
                 <ItemsControl ItemsSource="{Binding Computers}" Name="ComputerItemControl">
+                    <!-- Computer -->
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel/>
+                            <WrapPanel Margin="1"/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate >
-                            <StackPanel Grid.IsSharedSizeScope="True" >
-                                <TextBlock Text="{Binding Name}" />
-                                <!--<local:ComputerView  DataContext="{Binding}" />  #-->
-                            </StackPanel>
+
+                            <local:ComputerView  DataContext="{Binding}" /> 
+                            
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
+                    <!-- Computer -->
                 </ItemsControl>
+                <!-- List of Computers -->
+                
             </ScrollViewer>
         </Grid>
     </DockPanel>
