@@ -29,17 +29,83 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged(nameof(Computers));
         }
     }
+    
+    private string? _title = "Domain Tricks";
+    public string? Title
+    {
+        get { return _title; }
+        set
+        {
+            _title = value;
+            OnPropertyChanged(nameof(Title));
+        }
+    }
+    
+    private string? _statusBarText = string.Empty;
+    public string? StatusBarText
+    {
+        get { return _statusBarText; }
+        set
+        {
+            _statusBarText = value;
+            OnPropertyChanged(nameof(StatusBarText));
+        }
+    }
+    
+    private bool _isPaused = false;
+    public bool IsPaused
+    {
+        get { return _isPaused; }
+        set
+        {
+            _isPaused = value;
+            OnPropertyChanged(nameof(IsPaused));
+        }
+    }
 
-    public string? Title { get; set; } = "Domain Tricks";
-    public string? StatusBarText { get; set; } = string.Empty;
+    private Visibility _progressBarShouldBeVisible = Visibility.Hidden;
+    public Visibility ProgressBarShouldBeVisible
+    {
+        get { return _progressBarShouldBeVisible; }
+        set
+        {
+            _progressBarShouldBeVisible = value;
+            OnPropertyChanged(nameof(ProgressBarShouldBeVisible));
+        }
+    }
 
-    public bool IsPaused { get; set; } = false;
-    public Visibility ProgressBarShouldBeVisible { get; set; } = Visibility.Hidden;
+    private int _progressBarMaximum = 100;
+    public int ProgressBarMaximum
+    {
+        get { return _progressBarMaximum; }
+        set
+        {
+            _progressBarMaximum = value;
+            OnPropertyChanged(nameof(ProgressBarMaximum));
+        }
+    }
+    
+    private int _progressBarPercent = 0;
+    public int ProgressBarPercent
+    {
+        get { return _progressBarPercent; }
+        set
+        {
+            _progressBarPercent = value;
+            OnPropertyChanged(nameof(ProgressBarPercent));
+        }
+    }
 
-    public int ProgressBarMaximum { get; set; } = 100;
-    public int ProgressBarPercent { get; set; } = 100;
-
-    public string? FilterString { get; set; } = string.Empty;
+    private string? _filterString = String.Empty;
+    public string? FilterString
+    {
+        get { return _filterString; }
+        set
+        {
+            _filterString = value;
+            OnPropertyChanged(nameof(FilterString));
+        }
+    }
 
     public MenuClickedCommand MenuClickedCommand { get; set; }
 
