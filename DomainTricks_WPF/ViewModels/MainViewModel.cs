@@ -1,4 +1,5 @@
-﻿using DomainTricks_WPF.Models;
+﻿using DomainTricks_WPF.Commands;
+using DomainTricks_WPF.Models;
 using DomainTricks_WPF.Services;
 using Microsoft.Management.Infrastructure;
 using Serilog;
@@ -12,12 +13,14 @@ using System.Threading.Tasks;
 
 namespace DomainTricks_WPF.ViewModels;
 
-public class MainViewModel
+public class MainViewModel : ViewModelBase
 {
     public string? Title { get; set; } = "Domain Tricks";
+
+    public MenuClickedCommand   MenuClickedCommand { get; set; }
     public MainViewModel(ILogger logger)
     {
-
+        this.MenuClickedCommand = new MenuClickedCommand(this);
 
         Log.Logger = logger;
         Log.Information("MainViewModel start.");
@@ -48,12 +51,7 @@ public class MainViewModel
 
     }
 
-    public void MenuClickedCommand(object sender)
-    {
-        
-    }
-
-    // Test the ComputersService.
+      // Test the ComputersService.
     public async void TestComputersService(ILogger logger)
     {
         DomainService domainService = new(logger);
@@ -164,6 +162,11 @@ public class MainViewModel
                 }
             }
         }
+    }
+
+    public void MenuClickedCommandAction()
+    {
+        Log.Information("MenuClickedCommandAction");
     }
 }
 
