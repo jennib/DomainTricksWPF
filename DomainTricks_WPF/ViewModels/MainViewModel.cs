@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.DirectoryServices;
 using System.Linq;
@@ -29,7 +30,7 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged(nameof(Computers));
         }
     }
-    
+
     private string? _title = "Domain Tricks";
     public string? Title
     {
@@ -40,7 +41,7 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged(nameof(Title));
         }
     }
-    
+
     private string? _statusBarText = string.Empty;
     public string? StatusBarText
     {
@@ -51,7 +52,7 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged(nameof(StatusBarText));
         }
     }
-    
+
     private bool _isPaused = false;
     public bool IsPaused
     {
@@ -84,7 +85,7 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged(nameof(ProgressBarMaximum));
         }
     }
-    
+
     private int _progressBarPercent = 0;
     public int ProgressBarPercent
     {
@@ -103,8 +104,25 @@ public class MainViewModel : ViewModelBase
         set
         {
             _filterString = value;
+            if (ComputerCollectionView is not null)
+            {
+                ComputerCollectionView.Refresh();
+            }
             OnPropertyChanged(nameof(FilterString));
         }
+    }
+
+    // for filtering and sorting
+    private ICollectionView? _computerCollectionView = null;
+    public ICollectionView? ComputerCollectionView
+    {
+        get { return _computerCollectionView; }
+        private set
+        {
+            _computerCollectionView = value;
+            OnPropertyChanged(nameof(ComputerCollectionView));
+        }
+
     }
 
     public MenuClickedCommand MenuClickedCommand { get; set; }
@@ -116,11 +134,13 @@ public class MainViewModel : ViewModelBase
 
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
-        ComputerModel StartComputer = new("Loading", logger);
-        List<ComputerModel> StartComputerList = new() {
-            StartComputer
-        };
-        Computers = StartComputerList;
+        //ComputerModel StartComputer = new("Loading", logger);
+        //List<ComputerModel> StartComputerList = new() {
+        //    StartComputer
+        //};
+        //Computers = StartComputerList;
+
+        //SetupCollectionView();
 
         // Test Timer
         //TestTimer(logger);
@@ -162,7 +182,11 @@ public class MainViewModel : ViewModelBase
         {
             Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
         }
-        this.Computers = computersList;
+        //this.Computers.Clear();
+        //this.Computers.AddRange(computersList);
+        Computers = computersList;
+        SetupCollectionView();
+        OnPropertyChanged(nameof(Computers));
     }
 
     // Test the Timer in BackgroundTask
@@ -291,6 +315,32 @@ public class MainViewModel : ViewModelBase
                 Log.Information("Unknown");
                 break;
         }
+    }
+
+    private void SetupCollectionView()
+    {
+        // setup filtering and sorting
+        ComputerCollectionView = CollectionViewSource.GetDefaultView(Computers);
+        //  ComputerCollectionView.Filter = _filterComputers;
+        //  ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+        //ComputerCollectionView.SortDescriptions.Add(new SortDescription(nameof(ComputerViewModel.ComputerName), ListSortDirection.Ascending));
+    }
+
+    /// <summary>
+    /// Logic to filter the computer list
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    private bool _filterComputers(object obj)
+    {
+        //Log.Information("filter --------------");
+        //if (String.IsNullOrEmpty(this.FilterString)) return true;
+        if (obj is ComputerModel computerViewModel)
+        {
+            //Log.Information(computerViewModel.Name.Contains(filterString, StringComparison.InvariantCultureIgnoreCase));
+            return computerViewModel.Name.Contains(_filterString, StringComparison.InvariantCultureIgnoreCase);
+        }
+        return false;
     }
 }
 

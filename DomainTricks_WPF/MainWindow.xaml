@@ -10,6 +10,8 @@
         Loaded="OnLoaded"
         Title="{Binding Title}" Height="450" Width="800">
     
+    
+    
     <DockPanel>
 
         <Menu DockPanel.Dock="Top">
@@ -96,7 +98,7 @@
             <ScrollViewer>
                 
                 <!-- List of Computers -->
-                <ItemsControl ItemsSource="{Binding Computers}" Name="ComputerItemControl">
+                <ItemsControl ItemsSource="{Binding ComputerCollectionView}" Name="ComputerItemControl">
                     <!-- Computer -->
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -105,7 +107,7 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate >
-
+                            <!--<TextBox Text="{Binding Name}"/>-->
                             <local:ComputerView  DataContext="{Binding}" /> 
                             
                         </DataTemplate>
