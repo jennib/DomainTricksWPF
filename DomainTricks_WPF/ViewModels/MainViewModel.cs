@@ -19,6 +19,8 @@ namespace DomainTricks_WPF.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
+    private BackgroundTask? backgroundTask;
+
     // The main list of Computers
     private List<ComputerModel> _computers = new();
     public List<ComputerModel> Computers
@@ -134,6 +136,12 @@ public class MainViewModel : ViewModelBase
 
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
+        RefreshComputers();
+
+        backgroundTask = new BackgroundTask( logger,this);
+
+        backgroundTask.Start(TimeSpan.FromMinutes(1));
+
         //ComputerModel StartComputer = new("Loading", logger);
         //List<ComputerModel> StartComputerList = new() {
         //    StartComputer
@@ -146,8 +154,8 @@ public class MainViewModel : ViewModelBase
         //TestTimer(logger);
 
         // Test the ComputersService
-        Log.Information("Testing the ComputersService.");
-        TestComputersService(logger);
+        // Log.Information("Testing the ComputersService.");
+        //TestComputersService(logger);
 
         //// Test the Computer Model.
         //Log.Information("Test the ComputerModel.");
@@ -168,7 +176,25 @@ public class MainViewModel : ViewModelBase
 
     }
 
+    public async Task RefreshComputers()
+    {
+        Log.Information("RefreshComputers start.");
+        DomainService domainService = new(Log.Logger);
+        string domainPath = await DomainService.GetCurrentDomainPathAsync();
 
+        ComputersService computers = new(Log.Logger);
+        List<ComputerModel> computersList = await computers.GetComputers(domainPath);
+        //foreach (ComputerModel computer in computersList)
+        //{
+        //    Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
+        //}
+        this.Computers.Clear();
+        this.Computers.AddRange(computersList);
+        Computers = computersList;
+        SetupCollectionView();
+        OnPropertyChanged(nameof(Computers));
+        Log.Information("RefreshComputers end.");
+    }
 
     // Test the ComputersService.
     public async void TestComputersService(ILogger logger)
@@ -178,12 +204,12 @@ public class MainViewModel : ViewModelBase
 
         ComputersService computers = new(logger);
         List<ComputerModel> computersList = await computers.GetComputers(domainPath);
-        foreach (ComputerModel computer in computersList)
-        {
-            Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
-        }
-        //this.Computers.Clear();
-        //this.Computers.AddRange(computersList);
+        //foreach (ComputerModel computer in computersList)
+        //{
+        //    Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
+        //}
+        this.Computers.Clear();
+        this.Computers.AddRange(computersList);
         Computers = computersList;
         SetupCollectionView();
         OnPropertyChanged(nameof(Computers));
@@ -193,9 +219,9 @@ public class MainViewModel : ViewModelBase
     public async void TestTimer(ILogger logger)
     {
         Log.Information("Test the Timer in BackgroundTask.");
-        BackgroundTask task = new BackgroundTask(TimeSpan.FromMilliseconds(1000), logger);
+        BackgroundTask task = new BackgroundTask( logger,this);
 
-        task.Start();
+        task.Start(TimeSpan.FromMinutes(1));
 
         await Task.Delay(TimeSpan.FromSeconds(10));
         await task.StopAsync();
@@ -321,8 +347,8 @@ public class MainViewModel : ViewModelBase
     {
         // setup filtering and sorting
         ComputerCollectionView = CollectionViewSource.GetDefaultView(Computers);
-        //  ComputerCollectionView.Filter = _filterComputers;
-        //  ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+        ComputerCollectionView.Filter = _filterComputers;
+        ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
         //ComputerCollectionView.SortDescriptions.Add(new SortDescription(nameof(ComputerViewModel.ComputerName), ListSortDirection.Ascending));
     }
 

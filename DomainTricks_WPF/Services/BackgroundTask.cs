@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using DomainTricks_WPF.ViewModels;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,28 +17,31 @@ public class BackgroundTask
     // await task.StopAsync();
 
     private Task? _timerTask;
-    private readonly PeriodicTimer _timer;
+    private PeriodicTimer? _timer;
     private  CancellationTokenSource _tokenSource = new();
-
-    public BackgroundTask(TimeSpan interval,ILogger logger)
+    private MainViewModel _mainViewModel;
+    
+    public BackgroundTask(ILogger logger, MainViewModel mainViewModel)
     {
         Log.Logger = logger;
-        _timer = new(interval);
+        _mainViewModel = mainViewModel;
+       // _timer = new(interval;
     }
 
-    public void Start()
+    public void Start(TimeSpan interval)
     {
+        _timer = new (interval);
         _timerTask = DoWorkAsync();
     }
 
-    private async Task DoWorkAsync()
+    public async Task DoWorkAsync()
     {
         try
         {
             while (await _timer.WaitForNextTickAsync(_tokenSource.Token) && !_tokenSource.IsCancellationRequested)
             {
                 Log.Information($"Timer tick " + DateTime.Now.ToString("O"));
-
+                await _mainViewModel.RefreshComputers();
             }
         }
         catch (OperationCanceledException)
@@ -56,7 +60,7 @@ public class BackgroundTask
             _tokenSource.Cancel();
             await _timerTask;
             _tokenSource.Dispose();
-            Log.Information("PeriodidTimer task was cancelled");
+            Log.Information("PeriodidTimer task was canceled");
         }
     }
 }

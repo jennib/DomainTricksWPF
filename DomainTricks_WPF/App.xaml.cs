@@ -1,4 +1,5 @@
-﻿using DomainTricks_WPF.ViewModels;
+﻿using DomainTricks_WPF.Services;
+using DomainTricks_WPF.ViewModels;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace DomainTricks_WPF;
 public partial class App : Application
 {
     private readonly MainWindow appWindow;
-
+    private readonly BackgroundTask backgroundTask;
+    
     private readonly ILogger Logger;
     public App()
     {
@@ -36,13 +38,18 @@ public partial class App : Application
         //appWindow.DataContext = new MainViewModel(Logger);
         appWindow.Show();
     }
-
-   
-
+    
+    protected override  void OnStartup(StartupEventArgs e)
+    {
+        Log.Verbose("OnStartup");
+        base.OnStartup(e);
+    }
+    
     protected override  void OnExit(System.Windows.ExitEventArgs e)
     {
-        Log.Information("");
-        Log.Information($"App exiting.");
+        Log.Information($"============= Exiting App. =============");
         base.OnExit(e);
     }
+
+
 }
