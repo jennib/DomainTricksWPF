@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace DomainTricks_WPF.ViewModels;
 
@@ -170,6 +171,7 @@ public class MainViewModel : ViewModelBase
     public async Task RefreshComputers()
     {
         Log.Information("RefreshComputers start.");
+        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
         DomainService domainService = new(Log.Logger);
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
 
@@ -183,8 +185,17 @@ public class MainViewModel : ViewModelBase
         this.Computers.AddRange(computersList);
         //Computers = computersList;
         SetupCollectionView();
-        OnPropertyChanged(nameof(Computers));
+        try
+        {
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+                Mouse.OverrideCursor = null;
+            });
+        } catch (Exception ex)
+        {
+            Log.Error($"Error: {ex.Message}");
+        }
         Log.Information("RefreshComputers end.");
+        OnPropertyChanged(nameof(Computers));
     }
 
     // Test the ComputersService.

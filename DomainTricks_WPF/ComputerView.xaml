@@ -8,6 +8,7 @@
         d:DataContext="{d:DesignInstance Type=model:ComputerModel}"
         mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
+
     <Grid>
         <Border BorderThickness="1" BorderBrush="Gray" Margin="1" Padding="4,0,4,0">
             <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True"  >
@@ -16,7 +17,7 @@
                     <TextBlock Text="{Binding OperatingSystem}" FontSize="8"  Margin="0,0,1 ,0"/>
                     <TextBlock Text="{Binding OperatingSystemVersion}" FontSize="8"/>
                 </StackPanel>
-
+                <TextBox Name="DateLastSeen" Text="{Binding DateLastSeen, StringFormat={}Last seen: {0:f}}" FontSize="8" BorderThickness="0"/>
                 <!-- List of OUs -->
                 <ItemsControl ItemsSource="{Binding OUList}" Name="OUItemList">
                     <!-- OU -->
@@ -36,9 +37,50 @@
                 </ItemsControl>
                 <!-- List of OUs -->
 
+                <!-- List of Drives.    -->
+                <StackPanel >
+                    <!-- Hide if no Drives -->
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ListOfWin32_LogicalDisk.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
+                    <DataGrid ItemsSource="{Binding ListOfWin32_LogicalDisk}" AutoGenerateColumns="False" IsReadOnly="True"
+                          GridLinesVisibility="All" 
+                          BorderBrush="#bbbdbb" BorderThickness="1"
+                          HorizontalGridLinesBrush="AliceBlue" VerticalGridLinesBrush="AliceBlue" FontSize="8"
+                         Background="White">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn  Header="Drive" Binding="{Binding DeviceID}"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding  SizeString}"/>
+                            <DataGridTextColumn Header="Free" Binding="{Binding  FreeSpaceString}"/>
+                            <DataGridTextColumn Header="% Free" Binding="{Binding  PercentFreeSpace, StringFormat={}{0:F0}% }" />
+                        </DataGrid.Columns>
+                        <!-- Set background color if percent is low -->
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" >
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{Binding PercentColor}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+
+                </StackPanel>
                 <!-- List of Instances -->
+                <!--
                 <ItemsControl  ItemsSource="{Binding ListOfWin32_LogicalDisk}" Name="InstancesDictionary">
-                    <!-- Instances -->
+                    -->
+                <!-- Instances -->
+                <!--
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Margin="1"/>
@@ -46,19 +88,17 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate >
-                            <StackPanel>
                                 <TextBlock Text="{Binding DeviceID}" /> 
-                                <TextBlock Text="{Binding FreeSpace}" /> 
-                                <TextBlock Text="{Binding Size}" /> 
-
-                               
-
-
-                            </StackPanel>
+                                <TextBlock Text="{Binding FreeSpaceString}" /> 
+                                <TextBlock Text="{Binding SizeString}" /> 
+                                <TextBlock Text="{Binding PercentFreeSpaceString}" /> 
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
-                    <!-- Instances -->
+                    -->
+                <!-- Instances -->
+                <!--
                 </ItemsControl>
+                -->
                 <!-- List of Instances -->
 
 
