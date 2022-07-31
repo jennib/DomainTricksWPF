@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DomainTricks_WPF.Services;
 
-public class BackgroundTask
+public class BackgroundService
 {
 
     // Call Example
@@ -18,19 +18,25 @@ public class BackgroundTask
 
     private Task? _timerTask;
     private PeriodicTimer? _timer;
-    private  CancellationTokenSource _tokenSource = new();
+    private CancellationTokenSource _tokenSource = new();
     private MainViewModel _mainViewModel;
-    
-    public BackgroundTask(ILogger logger, MainViewModel mainViewModel)
+    private bool? _isRunning = false;
+    public bool? IsRunning
+    {
+        get { return _isRunning; }
+    }
+
+
+    public BackgroundService(ILogger logger, MainViewModel mainViewModel)
     {
         Log.Logger = logger;
         _mainViewModel = mainViewModel;
-       // _timer = new(interval;
+        // _timer = new(interval;
     }
 
     public void Start(TimeSpan interval)
     {
-        _timer = new (interval);
+        _timer = new(interval);
         _timerTask = DoWorkAsync();
     }
 
@@ -40,6 +46,7 @@ public class BackgroundTask
         {
             while (await _timer.WaitForNextTickAsync(_tokenSource.Token) && !_tokenSource.IsCancellationRequested)
             {
+                _isRunning = true;
                 Log.Information($"Timer tick " + DateTime.Now.ToString("O"));
                 await _mainViewModel.RefreshComputers();
             }
@@ -48,10 +55,11 @@ public class BackgroundTask
         {
             // Eat this exception.  It is expected.
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             Log.Error(ex, "Exception in DoWorkAsnyc: {0}", ex.Message);
         }
+        finally { _isRunning = false; }
     }
     public async Task StopAsync()
     {

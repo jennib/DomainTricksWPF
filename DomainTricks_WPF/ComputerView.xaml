@@ -16,6 +16,52 @@
                     <TextBlock Text="{Binding OperatingSystem}" FontSize="8"  Margin="0,0,1 ,0"/>
                     <TextBlock Text="{Binding OperatingSystemVersion}" FontSize="8"/>
                 </StackPanel>
+
+                <!-- List of OUs -->
+                <ItemsControl ItemsSource="{Binding OUList}" Name="OUItemList">
+                    <!-- OU -->
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Margin="1"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate >
+                            <!--<TextBox Text="{Binding Name}"/>-->
+                            <local:ComputerOUView  DataContext="{Binding}" />
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <!-- OU -->
+                </ItemsControl>
+                <!-- List of OUs -->
+
+                <!-- List of Instances -->
+                <ItemsControl  ItemsSource="{Binding ListOfWin32_LogicalDisk}" Name="InstancesDictionary">
+                    <!-- Instances -->
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="1"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate >
+                            <StackPanel>
+                                <TextBlock Text="{Binding DeviceID}" /> 
+                                <TextBlock Text="{Binding FreeSpace}" /> 
+                                <TextBlock Text="{Binding Size}" /> 
+
+                               
+
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <!-- Instances -->
+                </ItemsControl>
+                <!-- List of Instances -->
+
+
             </StackPanel>
         </Border>
     </Grid>

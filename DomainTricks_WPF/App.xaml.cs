@@ -18,7 +18,7 @@ namespace DomainTricks_WPF;
 public partial class App : Application
 {
     private readonly MainWindow appWindow;
-    private readonly BackgroundTask backgroundTask;
+    private readonly BackgroundService? backgroundTask;
     
     private readonly ILogger Logger;
     public App()

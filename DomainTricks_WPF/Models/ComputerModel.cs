@@ -1,11 +1,14 @@
 ﻿using Microsoft.Management.Infrastructure;
 using Serilog;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace DomainTricks_WPF.Models;
 
@@ -42,8 +45,8 @@ public class ComputerModel : ModelBase
     public string? OperatingSystem { get; set; }
     public string? OperatingSystemVersion { get; set; }
     public string? DNSHostName { get; set; }
-    
-    
+
+
 
     // checks if this ComputerModel points to the computer it is running on
     public static bool IsLocalComputer(string computerName)
@@ -55,12 +58,23 @@ public class ComputerModel : ModelBase
     // Key should be the class name used to generate the CimInstance List.
     public Dictionary<string, List<CimInstance>> InstancesDictionary { get; set; } = new();
 
+    private List<DriveModel> _listOfWin32_LogicalDisk = new ();
+    public List<DriveModel> ListOfWin32_LogicalDisk
+    {
+        get { return _listOfWin32_LogicalDisk; }
+        set
+        {
+            _listOfWin32_LogicalDisk = value;
+            OnPropertyChanged(nameof(_listOfWin32_LogicalDisk));
+        }
+    }
 
     public ComputerModel(string computerName, ILogger logger)
     {
         Log.Logger = logger;
         _name = computerName;
         _id = Guid.NewGuid();
-        Log.Information($"Creating comptuer with Guid {_id}.");
+        Log.Information($"Creating computer with Guid {_id}.");
     }
+
 }

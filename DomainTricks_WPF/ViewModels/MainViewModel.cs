@@ -19,7 +19,7 @@ namespace DomainTricks_WPF.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    private BackgroundTask? backgroundTask;
+    private BackgroundService? backgroundTask;
 
     // The main list of Computers
     private List<ComputerModel> _computers = new();
@@ -44,6 +44,8 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+    public bool IsPaused { get; set; }
+
     private string? _statusBarText = string.Empty;
     public string? StatusBarText
     {
@@ -52,17 +54,6 @@ public class MainViewModel : ViewModelBase
         {
             _statusBarText = value;
             OnPropertyChanged(nameof(StatusBarText));
-        }
-    }
-
-    private bool _isPaused = false;
-    public bool IsPaused
-    {
-        get { return _isPaused; }
-        set
-        {
-            _isPaused = value;
-            OnPropertyChanged(nameof(IsPaused));
         }
     }
 
@@ -114,7 +105,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    // for filtering and sorting
+     // For filtering and sorting of computers.
     private ICollectionView? _computerCollectionView = null;
     public ICollectionView? ComputerCollectionView
     {
@@ -138,7 +129,7 @@ public class MainViewModel : ViewModelBase
 
         RefreshComputers();
 
-        backgroundTask = new BackgroundTask( logger,this);
+        backgroundTask = new BackgroundService( logger,this);
 
         backgroundTask.Start(TimeSpan.FromMinutes(1));
 
@@ -190,7 +181,7 @@ public class MainViewModel : ViewModelBase
         //}
         this.Computers.Clear();
         this.Computers.AddRange(computersList);
-        Computers = computersList;
+        //Computers = computersList;
         SetupCollectionView();
         OnPropertyChanged(nameof(Computers));
         Log.Information("RefreshComputers end.");
@@ -219,7 +210,7 @@ public class MainViewModel : ViewModelBase
     public async void TestTimer(ILogger logger)
     {
         Log.Information("Test the Timer in BackgroundTask.");
-        BackgroundTask task = new BackgroundTask( logger,this);
+        BackgroundService task = new BackgroundService( logger,this);
 
         task.Start(TimeSpan.FromMinutes(1));
 
@@ -349,21 +340,12 @@ public class MainViewModel : ViewModelBase
         ComputerCollectionView = CollectionViewSource.GetDefaultView(Computers);
         ComputerCollectionView.Filter = _filterComputers;
         ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-        //ComputerCollectionView.SortDescriptions.Add(new SortDescription(nameof(ComputerViewModel.ComputerName), ListSortDirection.Ascending));
     }
 
-    /// <summary>
-    /// Logic to filter the computer list
-    /// </summary>
-    /// <param name="obj"></param>
-    /// <returns></returns>
-    private bool _filterComputers(object obj)
+     private bool _filterComputers(object obj)
     {
-        //Log.Information("filter --------------");
-        //if (String.IsNullOrEmpty(this.FilterString)) return true;
         if (obj is ComputerModel computerViewModel)
         {
-            //Log.Information(computerViewModel.Name.Contains(filterString, StringComparison.InvariantCultureIgnoreCase));
             return computerViewModel.Name.Contains(_filterString, StringComparison.InvariantCultureIgnoreCase);
         }
         return false;
