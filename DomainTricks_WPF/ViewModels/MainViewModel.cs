@@ -1,4 +1,5 @@
 ﻿using DomainTricks_WPF.Commands;
+using DomainTricks_WPF.Helpers;
 using DomainTricks_WPF.Models;
 using DomainTricks_WPF.Services;
 using Microsoft.Management.Infrastructure;
@@ -106,7 +107,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-     // For filtering and sorting of computers.
+    // For filtering and sorting of computers.
     private ICollectionView? _computerCollectionView = null;
     public ICollectionView? ComputerCollectionView
     {
@@ -130,7 +131,7 @@ public class MainViewModel : ViewModelBase
 
         RefreshComputers();
 
-        backgroundTask = new BackgroundService( logger,this);
+        backgroundTask = new BackgroundService(logger, this);
 
         backgroundTask.Start(TimeSpan.FromMinutes(1));
 
@@ -171,7 +172,11 @@ public class MainViewModel : ViewModelBase
     public async Task RefreshComputers()
     {
         Log.Information("RefreshComputers start.");
-        Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+        Helper.SetMouseCursorToWait();
+        //Application.Current.Dispatcher.Invoke((Action)delegate
+        //{
+        //    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+        //});
         DomainService domainService = new(Log.Logger);
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
 
@@ -185,16 +190,13 @@ public class MainViewModel : ViewModelBase
         this.Computers.AddRange(computersList);
         //Computers = computersList;
         SetupCollectionView();
-        try
-        {
-            Application.Current.Dispatcher.Invoke((Action)delegate {
-                Mouse.OverrideCursor = null;
-            });
-        } catch (Exception ex)
-        {
-            Log.Error($"Error: {ex.Message}");
-        }
-        Log.Information("RefreshComputers end.");
+        Helper.SetMouseCursorToNormal();
+        //Application.Current.Dispatcher.Invoke((Action)delegate
+        //{
+        //    Mouse.OverrideCursor = null;
+        //    Log.Information("RefreshComputers end.");
+        //});
+
         OnPropertyChanged(nameof(Computers));
     }
 
@@ -221,7 +223,7 @@ public class MainViewModel : ViewModelBase
     public async void TestTimer(ILogger logger)
     {
         Log.Information("Test the Timer in BackgroundTask.");
-        BackgroundService task = new BackgroundService( logger,this);
+        BackgroundService task = new BackgroundService(logger, this);
 
         task.Start(TimeSpan.FromMinutes(1));
 
@@ -353,7 +355,7 @@ public class MainViewModel : ViewModelBase
         ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
     }
 
-     private bool _filterComputers(object obj)
+    private bool _filterComputers(object obj)
     {
         if (obj is ComputerModel computerViewModel)
         {

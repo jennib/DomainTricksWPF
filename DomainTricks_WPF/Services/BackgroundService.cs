@@ -48,6 +48,7 @@ public class BackgroundService
             {
                 _isRunning = true;
                 Log.Information($"Timer tick " + DateTime.Now.ToString("O"));
+                
                 await _mainViewModel.RefreshComputers();
             }
         }

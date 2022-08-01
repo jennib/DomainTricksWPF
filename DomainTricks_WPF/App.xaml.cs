@@ -38,7 +38,7 @@ public partial class App : Application
         //appWindow.DataContext = new MainViewModel(Logger);
         appWindow.Show();
     }
-    
+
     protected override  void OnStartup(StartupEventArgs e)
     {
         Log.Verbose("OnStartup");

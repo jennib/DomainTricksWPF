@@ -19,13 +19,13 @@ public class DriveModel
     public string? DeviceID { get => _deviceID; set => _deviceID = value; }
     public UInt64? FreeSpace { get => _freeSpace; set => _freeSpace = value; }
     public UInt64? Size { get => _size; set => _size = value; }
-    
+
     public string FreeSpaceString
     {
         get { return Helper.FormatBytes((ulong)FreeSpace); }
     }
-    
-    public string  SizeString
+
+    public string SizeString
     {
         get { return Helper.FormatBytes((ulong)Size); }
     }
@@ -48,9 +48,15 @@ public class DriveModel
     {
         get
         {
-            if (PercentFreeSpace <= 10) return "LightCoral";
-            return "";
-        } 
-       
+            if (PercentFreeSpace <= 50)
+            {
+                return "LightCoral";
+            }
+            else
+            {
+                return "White";
+            }
+        }
+
     }
 }
