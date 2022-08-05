@@ -48,7 +48,7 @@ public class DriveModel
     {
         get
         {
-            if (PercentFreeSpace <= 50)
+            if (PercentFreeSpace <= 10)
             {
                 return "LightCoral";
             }

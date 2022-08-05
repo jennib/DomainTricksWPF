@@ -22,7 +22,7 @@ public class MMIService
     public string? ErrorMessage = string.Empty;
 
     public List<CimInstance> Instances = new();
-        
+
     // Set Properties.
     public AuthenticationModel? Authentication { get; set; }
     public string? ClassName { get; set; }
@@ -33,18 +33,19 @@ public class MMIService
     // Set in the constructor.
     public string ComputerName { get; }
 
-    
+
     public MMIService(ILogger logger, string computerName)
     {
         ComputerName = computerName;
         Log.Logger = logger;
     }
-    
-    public  async Task<bool> TestConnection()
+
+    public async Task<bool> TestConnection()
     {
-        CimSessionOptions sessionOptions = new() { Timeout = TimeSpan.FromSeconds(1)};
+        CimSessionOptions sessionOptions = new() { Timeout = TimeSpan.FromSeconds(1) };
         // Use UserName and Password if they exit.
-        if (Authentication is not null && Authentication?.UserName is not null && Authentication?.Password is not null)
+        //if (Authentication is not null && Authentication?.UserName is not null && Authentication?.Password is not null)
+        if (Authentication is not null && Authentication.IsComplete)
         {
             // create Credentials.
             CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
@@ -54,7 +55,7 @@ public class MMIService
         bool result = false;
         try
         {
-             result = session.TestConnection();
+            result = session.TestConnection();
         }
         catch (Exception ex)
         {
@@ -66,7 +67,7 @@ public class MMIService
     }
     public async Task Execute()
     {
-        // Generate the properties string if Peroperties is not null.
+        // Generate the properties string if Properties is not null.
         string? propertiesString;
         if (PropertiesArray is not null && PropertiesArray?.Length > 0)
         {
@@ -92,7 +93,8 @@ public class MMIService
         if (ComputerModel.IsLocalComputer(ComputerName) == false)
         {
             // Use UserName and Password if they exit.
-            if (Authentication is not null && Authentication?.UserName is not null && Authentication?.Password is not null)
+            // if (Authentication is not null && !string.IsNullOrEmpty( Authentication?.UserName) && !string.IsNullOrEmpty( Authentication?.Password) && !string.IsNullOrEmpty(Authentication?.DomainName))
+            if (Authentication is not null && Authentication.IsComplete)
             {
                 // create Credentials.
                 CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
@@ -106,7 +108,7 @@ public class MMIService
         string nameSpace = @"root\cimv2";
 
         string mmiQuery = "SELECT " + propertiesString + " FROM " + ClassName;
-        
+
         // Append the filter if one exists.
         if (string.IsNullOrEmpty(FilterName) == false)
         {
@@ -116,9 +118,9 @@ public class MMIService
 
         CimSession session = CimSession.Create(ComputerName, SessionOptions);
         CimInstanceWatcher instanceWatcher = new();
-            CimAsyncMultipleResults<CimInstance> multiResult = session.QueryInstancesAsync(nameSpace, "WQL", mmiQuery);
-            multiResult.Subscribe(instanceWatcher);
-        
+        CimAsyncMultipleResults<CimInstance> multiResult = session.QueryInstancesAsync(nameSpace, "WQL", mmiQuery);
+        multiResult.Subscribe(instanceWatcher);
+
         // Wait for the results.
         while (instanceWatcher.IsFinsihed == false && instanceWatcher.IsError == false)
         {
@@ -133,7 +135,7 @@ public class MMIService
         {
             IsError = true;
             ErrorMessage = instanceWatcher.ErrorMessage;
-            Log.Error("Error: {0}", instanceWatcher.ErrorMessage  );
+            Log.Error("Error: {0}", instanceWatcher.ErrorMessage);
             throw new Exception(instanceWatcher.ErrorMessage);
         }
         else
@@ -174,7 +176,7 @@ class CimInstanceWatcher : IObserver<CimInstance>
         IsFinsihed = true;
         Log.Verbose("CimInstanceWatcher is Done");
     }
-    
+
     public void OnError(Exception e)
     {
         IsError = true;

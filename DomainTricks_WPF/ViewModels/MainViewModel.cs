@@ -173,10 +173,10 @@ public class MainViewModel : ViewModelBase
     {
         Log.Information("RefreshComputers start.");
         Helper.SetMouseCursorToWait();
-        //Application.Current.Dispatcher.Invoke((Action)delegate
-        //{
-        //    Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-        //});
+        ProgressBarShouldBeVisible = Visibility.Visible;
+        ProgressBarPercent = 50;
+        ProgressBarMaximum = 100;
+        StatusBarText = "Refreshing Computers...";
         DomainService domainService = new(Log.Logger);
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
 
@@ -191,12 +191,10 @@ public class MainViewModel : ViewModelBase
         //Computers = computersList;
         SetupCollectionView();
         Helper.SetMouseCursorToNormal();
-        //Application.Current.Dispatcher.Invoke((Action)delegate
-        //{
-        //    Mouse.OverrideCursor = null;
-        //    Log.Information("RefreshComputers end.");
-        //});
-
+        StatusBarText = $"Updated {String.Format("{0:f}", DateTime.Now) }";
+        ProgressBarShouldBeVisible = Visibility.Hidden;
+        ProgressBarPercent = 100;
+        ProgressBarMaximum = 100;
         OnPropertyChanged(nameof(Computers));
     }
 

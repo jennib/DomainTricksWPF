@@ -24,6 +24,20 @@ public class AuthenticationModel
     public string? UserName { get; set; }
     public string? Password { get; set; }
     
+    public bool IsComplete {
+        get
+        {
+            if (DomainName is not null && UserName is not null && Password is not null)
+            {
+                if (!string.IsNullOrEmpty(DomainName)  && !string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+    }
+
     public SecureString SecurePassword {get
         {
             SecureString securePassword = new();

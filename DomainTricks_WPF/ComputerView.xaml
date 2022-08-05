@@ -51,11 +51,25 @@
                         </Style>
                     </StackPanel.Style>
 
+                    <FrameworkElement x:Name="ProxyElement" Visibility="Collapsed"/>
+
                     <DataGrid ItemsSource="{Binding ListOfWin32_LogicalDisk}" AutoGenerateColumns="False" IsReadOnly="True"
                           GridLinesVisibility="All" 
                           BorderBrush="#bbbdbb" BorderThickness="1"
                           HorizontalGridLinesBrush="AliceBlue" VerticalGridLinesBrush="AliceBlue" FontSize="8"
                          Background="White">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" >
+                                    <Setter.Value>
+                                        <!--<SolidColorBrush Color="{Binding DataContext.PercentColor, Source={x:Reference ProxyElement}}"/> -->
+
+                                         <SolidColorBrush Color="{Binding PercentColor}"/> 
+
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn  Header="Drive" Binding="{Binding DeviceID}"/>
                             <DataGridTextColumn Header="Size" Binding="{Binding  SizeString}"/>
@@ -63,15 +77,7 @@
                             <DataGridTextColumn Header="% Free" Binding="{Binding  PercentFreeSpace, StringFormat={}{0:F0}% }" />
                         </DataGrid.Columns>
                         <!-- Set background color if percent is low -->
-                        <DataGrid.RowStyle>
-                            <Style TargetType="DataGridRow">
-                                <Setter Property="Background" >
-                                    <Setter.Value>
-                                        <SolidColorBrush Color="{Binding PercentColor}"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </DataGrid.RowStyle>
+                        
                     </DataGrid>
 
                 </StackPanel>
