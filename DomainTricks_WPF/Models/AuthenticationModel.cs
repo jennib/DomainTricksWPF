@@ -20,9 +20,9 @@ public class AuthenticationModel
 
     }
 
-    public string? DomainName  { get; set; }
-    public string? UserName { get; set; }
-    public string? Password { get; set; }
+    public string? DomainName { get; set; } = string.Empty;
+    public string? UserName { get; set; } = String.Empty;
+    public string? Password { get; set; } = String.Empty;
     
     public bool IsComplete {
         get

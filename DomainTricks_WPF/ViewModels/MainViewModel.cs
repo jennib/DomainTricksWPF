@@ -129,11 +129,11 @@ public class MainViewModel : ViewModelBase
 
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
-        RefreshComputers();
+        //RefreshComputers();
 
-        backgroundTask = new BackgroundService(logger, this);
+        //backgroundTask = new BackgroundService(logger, this);
 
-        backgroundTask.Start(TimeSpan.FromMinutes(1));
+        //backgroundTask.Start(TimeSpan.FromMinutes(10));
 
         //ComputerModel StartComputer = new("Loading", logger);
         //List<ComputerModel> StartComputerList = new() {
@@ -191,7 +191,7 @@ public class MainViewModel : ViewModelBase
         //Computers = computersList;
         SetupCollectionView();
         Helper.SetMouseCursorToNormal();
-        StatusBarText = $"Updated {String.Format("{0:f}", DateTime.Now) }";
+        StatusBarText = $"Updated {String.Format("{0:f}", DateTime.Now)}";
         ProgressBarShouldBeVisible = Visibility.Hidden;
         ProgressBarPercent = 100;
         ProgressBarMaximum = 100;
@@ -329,6 +329,7 @@ public class MainViewModel : ViewModelBase
                 break;
             case "Preferences":
                 Log.Information("Preferences");
+                OpenPreferences(null);
                 break;
             case "Help":
                 Log.Information("Help");
@@ -345,22 +346,39 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private void SetupCollectionView()
+    void OpenPreferences(object parameter)
     {
-        // setup filtering and sorting
-        ComputerCollectionView = CollectionViewSource.GetDefaultView(Computers);
-        ComputerCollectionView.Filter = _filterComputers;
-        ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+        // TODO make this more MVVMish
+        Log.Information($"Open Preferences {parameter}");
+        // Open the preference window for app settings
+
+        
+        PreferencesViewModel preferencesViewModel = new(Log.Logger);
+        PreferencesView preferencesView = new( preferencesViewModel);
+        //preferencesView.DataContext = preferencesViewModel;
+       
+        preferencesView.ShowDialog();
     }
 
-    private bool _filterComputers(object obj)
+  
+ 
+
+private void SetupCollectionView()
+{
+    // setup filtering and sorting
+    ComputerCollectionView = CollectionViewSource.GetDefaultView(Computers);
+    ComputerCollectionView.Filter = _filterComputers;
+    ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+}
+
+private bool _filterComputers(object obj)
+{
+    if (obj is ComputerModel computerViewModel)
     {
-        if (obj is ComputerModel computerViewModel)
-        {
-            return computerViewModel.Name.Contains(_filterString, StringComparison.InvariantCultureIgnoreCase);
-        }
-        return false;
+        return computerViewModel.Name.Contains(_filterString, StringComparison.InvariantCultureIgnoreCase);
     }
+    return false;
+}
 }
 
 

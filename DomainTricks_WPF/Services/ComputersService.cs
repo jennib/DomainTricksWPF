@@ -23,8 +23,8 @@ namespace DomainTricks_WPF.Services
             List<ComputerModel> computers = new();
 
             // Setup the authentication credentials
-            AuthenticationModel auth = new("", "", "");
-            //AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+           // AuthenticationModel auth = new("", "", "");
+           AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
 
             // Get a list of Computers from the Directory.
             ADService adService = new ADService(Log.Logger);
