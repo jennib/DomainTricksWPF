@@ -12,12 +12,22 @@ namespace DomainTricks_WPF.ViewModels
 {
     public class PreferencesViewModel : ViewModelBase
     {
+        private bool _runAsLocalUser = true;
         private string _domainName = "Domain Name";
         private string _userName = "User Name";
         private string _password = "Password";
         private bool _shouldRememberPassword = true;
 
-        public string DomainName 
+        public bool RunAsLocalUser
+        {
+            get { return _runAsLocalUser; }
+            set
+            {
+                _runAsLocalUser = value;
+                OnPropertyChanged(nameof(RunAsLocalUser));
+            }
+        }
+        public string DomainName
         {
             get { return _domainName; }
             set
@@ -47,7 +57,9 @@ namespace DomainTricks_WPF.ViewModels
         public bool ShouldRememberPassword
         {
             get { return _shouldRememberPassword; }
-            set { _shouldRememberPassword = value;
+            set
+            {
+                _shouldRememberPassword = value;
                 OnPropertyChanged(nameof(ShouldRememberPassword));
             }
         }
@@ -56,22 +68,30 @@ namespace DomainTricks_WPF.ViewModels
         public Action? CloseAction { get; set; }
 
         public RelayCommand SavePreferencesCommand { get; set; }
-        
+
         // Should the Save button be enabled.
-        public bool CanSave(object value) { 
-                if (string.IsNullOrEmpty(DomainName) || string.IsNullOrEmpty(UserName) 
-                    || string.IsNullOrEmpty(Password))
-                { 
-                    return false; 
-                }
+        public bool CanSave(object value)
+        {
+            if (RunAsLocalUser)
+            {
                 return true;
-            } 
+            }
+            if (string.IsNullOrEmpty(DomainName) || string.IsNullOrEmpty(UserName)
+                || string.IsNullOrEmpty(Password))
+            {
+                return false;
+            }
+            return true;
+        }
 
         public PreferencesViewModel(ILogger logger)
         {
             Log.Logger = logger;
             // Load from settings on disk.
             SavePreferencesCommand = new RelayCommand(SavePreferences, CanSave);
+
+            // TODO: Get values from AuthenticationModel
+            RunAsLocalUser = Properties.Settings.Default.RunAsLocalUser;
             DomainName = Properties.Settings.Default.DomainName;
             UserName = Properties.Settings.Default.UserName;
             Password = Properties.Settings.Default.Password;
@@ -81,34 +101,39 @@ namespace DomainTricks_WPF.ViewModels
         public void SavePreferences(object value)
         {
             Log.Information("Saving Preferences");
-            if (string.IsNullOrEmpty(DomainName) || string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
+            if (RunAsLocalUser == false)
             {
-                MessageBox.Show("Please fill in all fields");
-                return;
+                if (string.IsNullOrWhiteSpace(DomainName) || string.IsNullOrWhiteSpace(UserName)
+                    || string.IsNullOrWhiteSpace(Password))
+                {
+                    MessageBox.Show("Please fill in all fields");
+                    return;
+                }
             }
-            
+
             // Save values to settings on disk.
-            Properties.Settings.Default.DomainName = DomainName;
-            Properties.Settings.Default.UserName = UserName;
-            if (ShouldRememberPassword)
+            Properties.Settings.Default.RunAsLocalUser = RunAsLocalUser;
+            if (RunAsLocalUser)
             {
-                Properties.Settings.Default.Password = Password;
+                Properties.Settings.Default.DomainName = "";
+                Properties.Settings.Default.UserName = "";
+                Properties.Settings.Default.Password = "";
+                Properties.Settings.Default.ShouldRememberPassword = false;
             }
-            Properties.Settings.Default.ShouldRememberPassword = ShouldRememberPassword;
+            else
+            {
+                Properties.Settings.Default.DomainName = DomainName;
+                Properties.Settings.Default.UserName = UserName;
+                if (ShouldRememberPassword)
+                {
+                    Properties.Settings.Default.Password = Password;
+                }
+                Properties.Settings.Default.ShouldRememberPassword = ShouldRememberPassword;
+            }
             Properties.Settings.Default.Save();
-            
+
             // Close the window.
             CloseAction?.Invoke();
-
-        }
-
-        public void CancelPreferences(object value)
-        {
-            Log.Information("Canceling Preferences");
-
-            // Close the window.
-            CloseAction();
-
         }
     }
 }

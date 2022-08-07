@@ -9,12 +9,14 @@ namespace DomainTricks_WPF.Models;
 
 public class AuthenticationModel
 {
-    public AuthenticationModel(string? domainName, string? userName, string? password)
+    public AuthenticationModel(string? domainName, string? userName, string? password,bool runAsLocalUser)
     {
         DomainName = domainName;
         UserName = userName;
         Password = password;
+        RunAsLocalUser = runAsLocalUser;
     }
+    
     public AuthenticationModel()
     {
 
@@ -23,22 +25,43 @@ public class AuthenticationModel
     public string? DomainName { get; set; } = string.Empty;
     public string? UserName { get; set; } = String.Empty;
     public string? Password { get; set; } = String.Empty;
-    
-    public bool IsComplete {
+    public bool RunAsLocalUser { get; set; } = true;
+
+    public bool IsComplete
+    {
         get
         {
-            if (DomainName is not null && UserName is not null && Password is not null)
+            if (!string.IsNullOrWhiteSpace(DomainName)
+                && !string.IsNullOrWhiteSpace(UserName)
+                && !string.IsNullOrWhiteSpace(Password))
             {
-                if (!string.IsNullOrEmpty(DomainName)  && !string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
-                {
-                    return false;
-                }
+                return false;
             }
             return false;
         }
     }
 
-    public SecureString SecurePassword {get
+    public void UpdateFromDisk()
+    {
+        RunAsLocalUser = Properties.Settings.Default.RunAsLocalUser;
+        DomainName = Properties.Settings.Default.DomainName;
+        UserName = Properties.Settings.Default.UserName;
+
+        string? tempPassword = Properties.Settings.Default.Password;
+        if (string.IsNullOrWhiteSpace(tempPassword))
+        {
+            Password = string.Empty;
+            // TODO: Ask user for password.
+        }
+        else
+        {
+            Password = tempPassword;
+        }
+    }
+
+    public SecureString SecurePassword
+    {
+        get
         {
             SecureString securePassword = new();
             if (Password is not null)
@@ -50,6 +73,6 @@ public class AuthenticationModel
             }
             return securePassword;
         }
-        
+
     }
 }

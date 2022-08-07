@@ -94,5 +94,17 @@ namespace DomainTricks_WPF.Properties {
                 this["ShouldRememberPassword"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RunAsLocalUser {
+            get {
+                return ((bool)(this["RunAsLocalUser"]));
+            }
+            set {
+                this["RunAsLocalUser"] = value;
+            }
+        }
     }
 }

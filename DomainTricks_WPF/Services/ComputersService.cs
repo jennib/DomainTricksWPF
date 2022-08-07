@@ -21,10 +21,10 @@ namespace DomainTricks_WPF.Services
         public async Task<List<ComputerModel>> GetComputers(string domainPath)
         {
             List<ComputerModel> computers = new();
-
+            
             // Setup the authentication credentials
-           // AuthenticationModel auth = new("", "", "");
-           AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+           // AuthenticationModel auth = new("", "", "",true);
+           AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password",false);
 
             // Get a list of Computers from the Directory.
             ADService adService = new ADService(Log.Logger);

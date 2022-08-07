@@ -254,7 +254,7 @@ public class MainViewModel : ViewModelBase
     {
         // Prepare to call MMIService.
         string computerName = "RELIC-PC";
-        AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password");
+        AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password",false);
         // AuthenticationModel auth = new();
         string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
         string ClassName = "Win32_Volume"; //"Win32_ComputerSystem";
