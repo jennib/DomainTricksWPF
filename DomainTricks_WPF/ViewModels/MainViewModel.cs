@@ -129,11 +129,11 @@ public class MainViewModel : ViewModelBase
 
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
-        //RefreshComputers();
+        RefreshComputers();
 
-        //backgroundTask = new BackgroundService(logger, this);
+        backgroundTask = new BackgroundService(logger, this);
 
-        //backgroundTask.Start(TimeSpan.FromMinutes(10));
+        backgroundTask.Start(TimeSpan.FromMinutes(15));
 
         //ComputerModel StartComputer = new("Loading", logger);
         //List<ComputerModel> StartComputerList = new() {

@@ -25,15 +25,15 @@
         <Label Content="Password"    Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
         <Label Content="Save  Password"    Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
 
-        <TextBox Text="{Binding  DomainName}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
-        <TextBox Text="{Binding  UserName}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
-        <TextBox Text="{Binding Password}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
-        <CheckBox IsChecked="{Binding SavePassword}" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
+        <TextBox Text="{Binding  DomainName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
+        <TextBox Text="{Binding  UserName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
+        <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
+        <CheckBox IsChecked="{Binding SavePassword, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
 
 
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4" Margin="15" HorizontalAlignment="Right">
             <Button Content="OK" Command="{Binding SavePreferencesCommand}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Width="60" FontSize="14" Height="25"/>
-            <Button Content="Cancel" Command="{Binding CancelPreferencesCommand}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Width="60" FontSize="14" Height="25"/>
+            <Button Content="Cancel" IsCancel="True" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="5" Width="60" FontSize="14" Height="25"/>
         </StackPanel>
     </Grid>
 </Window>
