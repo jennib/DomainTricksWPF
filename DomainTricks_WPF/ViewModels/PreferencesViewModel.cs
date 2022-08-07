@@ -12,11 +12,12 @@ namespace DomainTricks_WPF.ViewModels
 {
     public class PreferencesViewModel : ViewModelBase
     {
-        private bool _savePassword = true;
         private string _domainName = "Domain Name";
         private string _userName = "User Name";
         private string _password = "Password";
-        public string DomainName
+        private bool _shouldRememberPassword = true;
+
+        public string DomainName 
         {
             get { return _domainName; }
             set
@@ -43,14 +44,20 @@ namespace DomainTricks_WPF.ViewModels
                 OnPropertyChanged(nameof(Password));
             }
         }
-        public bool ShouldSavePassword
+        public bool ShouldRememberPassword
         {
-            get { return _savePassword; }
-            set { _savePassword = value;
-                OnPropertyChanged(nameof(ShouldSavePassword));
+            get { return _shouldRememberPassword; }
+            set { _shouldRememberPassword = value;
+                OnPropertyChanged(nameof(ShouldRememberPassword));
             }
         }
+
+        // Action to close the window.   Must be set up in the views codebehind.
+        public Action? CloseAction { get; set; }
+
         public RelayCommand SavePreferencesCommand { get; set; }
+        
+        // Should the Save button be enabled.
         public bool CanSave(object value) { 
                 if (string.IsNullOrEmpty(DomainName) || string.IsNullOrEmpty(UserName) 
                     || string.IsNullOrEmpty(Password))
@@ -59,19 +66,16 @@ namespace DomainTricks_WPF.ViewModels
                 }
                 return true;
             } 
-        //public SavePreferencesCommand SavePreferencesCommand { get; set; }
-        //public CancelPreferencesCommand CancelPreferencesCommand { get; set; }
 
-        // Action to close the window.   Must be set up in the views codebehind.
-        public Action CloseAction { get; set; }
         public PreferencesViewModel(ILogger logger)
         {
             Log.Logger = logger;
+            // Load from settings on disk.
             SavePreferencesCommand = new RelayCommand(SavePreferences, CanSave);
             DomainName = Properties.Settings.Default.DomainName;
             UserName = Properties.Settings.Default.UserName;
-
             Password = Properties.Settings.Default.Password;
+            ShouldRememberPassword = Properties.Settings.Default.ShouldRememberPassword;
         }
 
         public void SavePreferences(object value)
@@ -82,12 +86,19 @@ namespace DomainTricks_WPF.ViewModels
                 MessageBox.Show("Please fill in all fields");
                 return;
             }
+            
+            // Save values to settings on disk.
             Properties.Settings.Default.DomainName = DomainName;
             Properties.Settings.Default.UserName = UserName;
-            Properties.Settings.Default.Password = Password;
+            if (ShouldRememberPassword)
+            {
+                Properties.Settings.Default.Password = Password;
+            }
+            Properties.Settings.Default.ShouldRememberPassword = ShouldRememberPassword;
             Properties.Settings.Default.Save();
+            
             // Close the window.
-            CloseAction();
+            CloseAction?.Invoke();
 
         }
 

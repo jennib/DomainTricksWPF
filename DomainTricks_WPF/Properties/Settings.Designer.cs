@@ -61,7 +61,7 @@ namespace DomainTricks_WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
         public string DiskFreePercentCritical {
             get {
                 return ((string)(this["DiskFreePercentCritical"]));
@@ -73,13 +73,25 @@ namespace DomainTricks_WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
         public string DiskFreePercentWarning {
             get {
                 return ((string)(this["DiskFreePercentWarning"]));
             }
             set {
                 this["DiskFreePercentWarning"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShouldRememberPassword {
+            get {
+                return ((bool)(this["ShouldRememberPassword"]));
+            }
+            set {
+                this["ShouldRememberPassword"] = value;
             }
         }
     }

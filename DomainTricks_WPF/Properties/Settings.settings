@@ -12,10 +12,13 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="DiskFreePercentCritical" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="DiskFreePercentWarning" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">20</Value>
+    </Setting>
+    <Setting Name="ShouldRememberPassword" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>
