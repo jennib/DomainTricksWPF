@@ -67,10 +67,10 @@ namespace DomainTricks_WPF.ViewModels
             // Save values to settings on disk.
             int FreeSpaceCritical;
             int FreeSpaceWarning;
-            if ( int.TryParse(FreeSpaceCriticalPercent, out FreeSpaceCritical) {
+            if ( int.TryParse(FreeSpaceCriticalPercent, out FreeSpaceCritical)) {
                 Properties.Settings.Default.DiskFreePercentCritical = FreeSpaceCritical;
             }
-            if ( int.TryParse(FreeSpaceWarningPercent, out FreeSpaceWarning){
+            if ( int.TryParse(FreeSpaceWarningPercent, out FreeSpaceWarning)) {
                 Properties.Settings.Default.DiskFreePercentWarning = FreeSpaceWarning;
             }
             Properties.Settings.Default.Save();
