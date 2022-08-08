@@ -22,7 +22,6 @@ namespace DomainTricks_WPF.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private BackgroundService? backgroundTask;
-    //private AuthenticationModel? auth = new();
 
     // The main list of Computers
     private List<ComputerModel> _computers = new();
@@ -46,7 +45,6 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged(nameof(Title));
         }
     }
-
     public bool IsPaused { get; set; }
 
     private string? _statusBarText = string.Empty;
@@ -121,7 +119,6 @@ public class MainViewModel : ViewModelBase
 
     }
 
-    
     public MenuClickedCommand MenuClickedCommand { get; set; }
 
     public MainViewModel(ILogger logger)
@@ -131,9 +128,6 @@ public class MainViewModel : ViewModelBase
 
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
-        // Initialize the authentication model.
-        //auth.UpdateFromDisk();
-        
         RefreshComputers();
 
         backgroundTask = new BackgroundService(logger, this);
@@ -163,32 +157,19 @@ public class MainViewModel : ViewModelBase
         //Log.Information("Test the DomainService.");
         //TestDomainService(logger);
 
-        //// Test the Direcotry Search
+        //// Test the Directory Search
         //Log.Information("Test the Directory Search.");
         //TestADSearcher(logger);
 
         //// Test the MMIService.
         //Log.Information("Test the MMIService.");
         //TestMMI(logger, computer);
-
-        
     }
 
     public async Task RefreshComputers()
     {
         Log.Information("RefreshComputers start.");
         Helper.SetMouseCursorToWait();
-
-        // Ask user for credentials if not already set.
-        //if (auth is null) {
-        //    if (auth.RunAsLocalUser == false)
-        //    {
-        //        if (auth.IsComplete == false)
-        //        {
-        //            OpenPreferences(null);
-        //        }
-        //    }
-        //}
 
         ProgressBarShouldBeVisible = Visibility.Visible;
         ProgressBarPercent = 50;
@@ -199,8 +180,7 @@ public class MainViewModel : ViewModelBase
         StatusBarText = $"Refreshing Computers in {domainPath}...";
         ComputersService computers = new(Log.Logger);
         List<ComputerModel> computersList = await computers.GetComputers(domainPath);
-        //List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
-  
+
         this.Computers.Clear();
         this.Computers.AddRange(computersList);
         //Computers = computersList;
@@ -221,7 +201,6 @@ public class MainViewModel : ViewModelBase
 
         ComputersService computers = new(logger);
         List<ComputerModel> computersList = await computers.GetComputers(domainPath);
-        //List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
         //foreach (ComputerModel computer in computersList)
         //{
         //    Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
@@ -260,7 +239,8 @@ public class MainViewModel : ViewModelBase
     {
 
         ADService adService = new(logger);
-        List<ComputerModel> computerModels = await adService.GetListOfComputersFromADAsync(@"LDAP://DC=tuttistudios,DC=com");
+        string domainPath = await DomainService.GetCurrentDomainPathAsync();
+        List<ComputerModel> computerModels = await adService.GetListOfComputersFromADAsync(domainPath);
         Log.Information($"computerModels has {computerModels.Count()} computers.");
 
     }
@@ -270,15 +250,12 @@ public class MainViewModel : ViewModelBase
     {
         // Prepare to call MMIService.
         string computerName = "RELIC-PC";
-        AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password",false);
-        // AuthenticationModel auth = new();
         string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
         string ClassName = "Win32_Volume"; //"Win32_ComputerSystem";
         string FilterName = "";
 
         MMIService mmiService = new(logger, computerName)
         {
-            //Authentication = auth,
             PropertiesArray = PropertiesArray,
             ClassName = ClassName,
             FilterName = FilterName
@@ -294,7 +271,7 @@ public class MainViewModel : ViewModelBase
             Log.Error(ex, "Exception in TestMMI: {0}", ex.Message);
         }
 
-        // Check the Resuylts.
+        // Check the Results.
         // The Instances property is of type CimInstance.  
         // It can have multiple Instances and each instance can have multiple Properties.
         if (mmiService.IsError == true)
@@ -366,28 +343,28 @@ public class MainViewModel : ViewModelBase
     void OpenPreferences(object parameter)
     {
         Log.Information($"Open Preferences {parameter}");
-        
+
         PreferencesViewModel preferencesViewModel = new(Log.Logger);
-        PreferencesView preferencesView = new( preferencesViewModel);
+        PreferencesView preferencesView = new(preferencesViewModel);
         preferencesView.ShowDialog();
     }
 
-private void SetupCollectionView()
-{
-    // setup filtering and sorting
-    ComputerCollectionView = CollectionViewSource.GetDefaultView(Computers);
-    ComputerCollectionView.Filter = _filterComputers;
-    ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-}
-
-private bool _filterComputers(object obj)
-{
-    if (obj is ComputerModel computerViewModel)
+    private void SetupCollectionView()
     {
-        return computerViewModel.Name.Contains(_filterString, StringComparison.InvariantCultureIgnoreCase);
+        // setup filtering and sorting
+        ComputerCollectionView = CollectionViewSource.GetDefaultView(Computers);
+        ComputerCollectionView.Filter = _filterComputers;
+        ComputerCollectionView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
     }
-    return false;
-}
+
+    private bool _filterComputers(object obj)
+    {
+        if (obj is ComputerModel computerViewModel)
+        {
+            return computerViewModel.Name.Contains(_filterString, StringComparison.InvariantCultureIgnoreCase);
+        }
+        return false;
+    }
 }
 
 
