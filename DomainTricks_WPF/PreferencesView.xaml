@@ -10,9 +10,9 @@
         Title="Domain Tricks  Preferences" Height="250" Width="500" SizeToContent="Height" Topmost="True" WindowStartupLocation="CenterOwner">
 
 
-    <Grid Margin="2" >
+    <Grid Margin="2"  >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"  />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -24,10 +24,15 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <Label Content="Highlight Free Disk Space"    Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
-        
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Center">
+
+        <Label Content="Refresh Time"    Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
+        <Label Content="Highlight Free Disk Space"    Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
+
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left">
+            <TextBox Text="{Binding TimerMinutes, UpdateSourceTrigger=PropertyChanged}" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
+            <TextBlock Text=" minutes"  VerticalAlignment="Center" Margin="2"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" HorizontalAlignment="left">
             <TextBlock Text="Critical %"  VerticalAlignment="Center" Margin="2"/>
             <TextBox Text="{Binding FreeSpaceCriticalPercent, UpdateSourceTrigger=PropertyChanged}" Width="40" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
             <GridSplitter Width="10" ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" />

@@ -14,6 +14,7 @@ namespace DomainTricks_WPF.ViewModels
     {
         private string _freeSpaceCriticalPercent;
         private string _freeSpaceWarningPercent;
+        private string _timerMinutes;
 
         public string FreeSpaceCriticalPercent
         {
@@ -33,6 +34,16 @@ namespace DomainTricks_WPF.ViewModels
                 OnPropertyChanged(nameof(FreeSpaceWarningPercent));
             }
         }
+        
+        public  string TimerMinutes
+        {
+            get { return _timerMinutes; }
+            set
+            {
+                _timerMinutes = value;
+                OnPropertyChanged(nameof(TimerMinutes));
+            }
+        }
 
         // Action to close the window.   Must be set up in the views codebehind.
         public Action? CloseAction { get; set; }
@@ -43,7 +54,7 @@ namespace DomainTricks_WPF.ViewModels
         public bool CanSave(object value)
         {
        // Check that strings that should contain numbers, do.
-            if (int.TryParse(FreeSpaceCriticalPercent, out _) && int.TryParse(FreeSpaceWarningPercent, out _))
+            if (int.TryParse(FreeSpaceCriticalPercent, out _) && int.TryParse(FreeSpaceWarningPercent, out _) && int.TryParse(TimerMinutes, out _))
             {
                 return true;
             }
@@ -55,21 +66,26 @@ namespace DomainTricks_WPF.ViewModels
             Log.Logger = logger;
             // Load from settings on disk.
             SavePreferencesCommand = new RelayCommand(SavePreferences, CanSave);
-
+            TimerMinutes = Properties.Settings.Default.TimerMinutes.ToString();
             FreeSpaceCriticalPercent = Properties.Settings.Default.DiskFreePercentCritical.ToString();
             FreeSpaceWarningPercent = Properties.Settings.Default.DiskFreePercentWarning.ToString();
+            
         }
 
         public void SavePreferences(object value)
         {
             // Save values to settings on disk.
-            int FreeSpaceCritical;
-            int FreeSpaceWarning;
-            if ( int.TryParse(FreeSpaceCriticalPercent, out FreeSpaceCritical)) {
-                Properties.Settings.Default.DiskFreePercentCritical = FreeSpaceCritical;
+            int freeSpaceCritical;
+            int freeSpaceWarning;
+            int timerMinutes;
+            
+            if ( int.TryParse(FreeSpaceCriticalPercent, out freeSpaceCritical)) {
+                Properties.Settings.Default.DiskFreePercentCritical = freeSpaceCritical;
             }
-            if ( int.TryParse(FreeSpaceWarningPercent, out FreeSpaceWarning)) {
-                Properties.Settings.Default.DiskFreePercentWarning = FreeSpaceWarning;
+            if ( int.TryParse(FreeSpaceWarningPercent, out freeSpaceWarning)) {
+                Properties.Settings.Default.DiskFreePercentWarning = freeSpaceWarning;
+            } if ( int.TryParse(TimerMinutes, out timerMinutes)) {
+                Properties.Settings.Default.TimerMinutes = timerMinutes;
             }
             Properties.Settings.Default.Save();
 

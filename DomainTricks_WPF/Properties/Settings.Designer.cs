@@ -46,5 +46,17 @@ namespace DomainTricks_WPF.Properties {
                 this["DiskFreePercentWarning"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int TimerMinutes {
+            get {
+                return ((int)(this["TimerMinutes"]));
+            }
+            set {
+                this["TimerMinutes"] = value;
+            }
+        }
     }
 }
