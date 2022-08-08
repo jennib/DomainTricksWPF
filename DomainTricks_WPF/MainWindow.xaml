@@ -26,9 +26,9 @@
                           InputGestureText="Alt+F4"/>
             </MenuItem>
             <MenuItem Header="_Run">
-                <!-- <MenuItem Header="Run _Job" Name="RunJobMenu"
+                <MenuItem Header="Run _Job" Name="RunJobMenu"
                           Command="{Binding MenuClickedCommand}"
-                          CommandParameter="RunJob" /> -->
+                          CommandParameter="RunJob" /> 
                 <MenuItem Header="Paused" Name="pauseMenu"
                           IsCheckable="True" IsChecked="{Binding IsPaused}" 
                            Command="{Binding MenuClickedCommand}" 

@@ -5,7 +5,6 @@ using Serilog.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +18,6 @@ namespace DomainTricks_WPF.Services
         }
 
         public async Task<List<ComputerModel>> GetComputers(string domainPath)
-        //public async Task<List<ComputerModel>> GetComputers(string domainPath,AuthenticationModel? auth)
         {
             List<ComputerModel> computers = new();
             
@@ -46,15 +44,12 @@ namespace DomainTricks_WPF.Services
             //});
 
             computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers);
-            //computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers, auth);
 
             computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers);
-            //computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers, auth);
 
             return computers;
         }
         private async Task<List<ComputerModel>> GetComputers_Win32_ComputerSystem(ILogger logger, List<ComputerModel> computers)
-        //private async Task<List<ComputerModel>> GetComputers_Win32_ComputerSystem(ILogger logger, List<ComputerModel> computers, AuthenticationModel auth)
         {
             string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
             string ClassName = "Win32_ComputerSystem"; //"Win32_ComputerSystem";
@@ -64,12 +59,10 @@ namespace DomainTricks_WPF.Services
 
             //Get the MMI data for each computer.
             newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName);
-            //newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
 
             return newComputers;
         }
         private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger, List<ComputerModel> computers)
-        //private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger, List<ComputerModel> computers, AuthenticationModel auth)
         {
             string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
             string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
@@ -79,7 +72,6 @@ namespace DomainTricks_WPF.Services
 
             //Get the MMI data for each computer.
             newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName);
-            //newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
 
             // Add the Win32_LogicalDisk data to the ComputerModel ListOfWin32_LogicalDisk.
             foreach (ComputerModel computer in newComputers)
@@ -108,12 +100,6 @@ namespace DomainTricks_WPF.Services
         string[] propertiesArray,
         string className,
         string filterName)
-        //private async Task<List<ComputerModel>> GetListOfComputersWithInstances(ILogger logger,
-        //List<ComputerModel> computers,
-        //string[] propertiesArray,
-        //string className,
-        //string filterName,
-        //AuthenticationModel auth)
         {
             List<ComputerModel> newComputers = new();
 
@@ -125,7 +111,6 @@ namespace DomainTricks_WPF.Services
                     try
                     {
                         ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, propertiesArray, className, filterName).Result;
-                        //ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, propertiesArray, className, filterName, auth).Result;
                         newComputers.Add(newComputerWithMMI);
                     }
                     catch (Exception ex)
@@ -143,12 +128,6 @@ namespace DomainTricks_WPF.Services
             string[] propertiesArray,
             string className,
             string filterName)
-            //private async Task<ComputerModel> GetComputerWithInstances(ILogger logger,
-            //ComputerModel computer,
-            //string[] propertiesArray,
-            //string className,
-            //string filterName,
-            //AuthenticationModel auth)
         {
             // No name, no joy.
             if (string.IsNullOrEmpty(computer.Name))
@@ -166,7 +145,6 @@ namespace DomainTricks_WPF.Services
 
             MMIService mmiService = new(logger, computer.Name)
             {
-                //Authentication = auth,
                 PropertiesArray = propertiesArray,
                 ClassName = className,
                 FilterName = filterName
@@ -183,7 +161,7 @@ namespace DomainTricks_WPF.Services
                 throw;
             }
 
-            // Check the Resuylts.
+            // Check the Results.
             // The Instances property is of type CimInstance.  
             // It can have multiple Instances and each instance can have multiple Properties.
             if (mmiService.IsError == true)
