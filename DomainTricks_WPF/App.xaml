@@ -4,6 +4,6 @@
              xmlns:converters="clr-namespace:DomainTricks_WPF.Converters"
              xmlns:local="clr-namespace:DomainTricks_WPF">
     <Application.Resources>
-        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+       
     </Application.Resources>
 </Application>
