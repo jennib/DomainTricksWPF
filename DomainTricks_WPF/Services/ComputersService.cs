@@ -18,14 +18,10 @@ namespace DomainTricks_WPF.Services
             Log.Logger = logger;
         }
 
-        public async Task<List<ComputerModel>> GetComputers(string domainPath,AuthenticationModel? auth)
+        public async Task<List<ComputerModel>> GetComputers(string domainPath)
+        //public async Task<List<ComputerModel>> GetComputers(string domainPath,AuthenticationModel? auth)
         {
             List<ComputerModel> computers = new();
-            
-            // Setup the authentication credentials
-           // AuthenticationModel auth = new("", "", "",true);
-           //AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password",false);
-           
             
             // Get a list of Computers from the Directory.
             ADService adService = new ADService(Log.Logger);
@@ -49,13 +45,16 @@ namespace DomainTricks_WPF.Services
             //    });
             //});
 
-            computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers, auth);
+            computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers);
+            //computers = await GetComputers_Win32_LogicalDisks(Log.Logger, computers, auth);
 
-            computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers, auth);
+            computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers);
+            //computers = await GetComputers_Win32_ComputerSystem(Log.Logger, computers, auth);
 
             return computers;
         }
-        private async Task<List<ComputerModel>> GetComputers_Win32_ComputerSystem(ILogger logger, List<ComputerModel> computers, AuthenticationModel auth)
+        private async Task<List<ComputerModel>> GetComputers_Win32_ComputerSystem(ILogger logger, List<ComputerModel> computers)
+        //private async Task<List<ComputerModel>> GetComputers_Win32_ComputerSystem(ILogger logger, List<ComputerModel> computers, AuthenticationModel auth)
         {
             string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
             string ClassName = "Win32_ComputerSystem"; //"Win32_ComputerSystem";
@@ -64,11 +63,13 @@ namespace DomainTricks_WPF.Services
             List<ComputerModel> newComputers = new();
 
             //Get the MMI data for each computer.
-            newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
+            newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName);
+            //newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
 
             return newComputers;
         }
-        private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger, List<ComputerModel> computers, AuthenticationModel auth)
+        private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger, List<ComputerModel> computers)
+        //private async Task<List<ComputerModel>> GetComputers_Win32_LogicalDisks(ILogger logger, List<ComputerModel> computers, AuthenticationModel auth)
         {
             string[] PropertiesArray = { "*" };//{"TotalPhysicalMemory"};
             string ClassName = "Win32_LogicalDisk"; //"Win32_ComputerSystem";
@@ -77,7 +78,8 @@ namespace DomainTricks_WPF.Services
             List<ComputerModel> newComputers = new();
 
             //Get the MMI data for each computer.
-            newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
+            newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName);
+            //newComputers = await GetListOfComputersWithInstances(Log.Logger, computers, PropertiesArray, ClassName, FilterName, auth);
 
             // Add the Win32_LogicalDisk data to the ComputerModel ListOfWin32_LogicalDisk.
             foreach (ComputerModel computer in newComputers)
@@ -105,8 +107,13 @@ namespace DomainTricks_WPF.Services
         List<ComputerModel> computers,
         string[] propertiesArray,
         string className,
-        string filterName,
-        AuthenticationModel auth)
+        string filterName)
+        //private async Task<List<ComputerModel>> GetListOfComputersWithInstances(ILogger logger,
+        //List<ComputerModel> computers,
+        //string[] propertiesArray,
+        //string className,
+        //string filterName,
+        //AuthenticationModel auth)
         {
             List<ComputerModel> newComputers = new();
 
@@ -117,8 +124,8 @@ namespace DomainTricks_WPF.Services
                 {
                     try
                     {
-                        ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, propertiesArray, className, filterName, auth).Result;
-                    // newComputerWithMMI.DateLastSeen = DateTime.Now;  Moved to TestConnection to allow for pre-check
+                        ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, propertiesArray, className, filterName).Result;
+                        //ComputerModel newComputerWithMMI = GetComputerWithInstances(Log.Logger, computer, propertiesArray, className, filterName, auth).Result;
                         newComputers.Add(newComputerWithMMI);
                     }
                     catch (Exception ex)
@@ -135,8 +142,13 @@ namespace DomainTricks_WPF.Services
             ComputerModel computer,
             string[] propertiesArray,
             string className,
-            string filterName,
-            AuthenticationModel auth)
+            string filterName)
+            //private async Task<ComputerModel> GetComputerWithInstances(ILogger logger,
+            //ComputerModel computer,
+            //string[] propertiesArray,
+            //string className,
+            //string filterName,
+            //AuthenticationModel auth)
         {
             // No name, no joy.
             if (string.IsNullOrEmpty(computer.Name))
@@ -148,13 +160,13 @@ namespace DomainTricks_WPF.Services
             // Check to see if the computer tested online in the last minute
             if (computer.DateLastSeen is null || computer.DateLastSeen?.AddMinutes(5) < DateTime.Now)
             {
-                Log.Information($"Skipping {computer.Name}  because it was tested online in the last 5 minutes.");
+                Log.Information($"Skipping {computer.Name}  because it was not tested in the last 5 minutes.");
                 return computer;
             }
 
             MMIService mmiService = new(logger, computer.Name)
             {
-                Authentication = auth,
+                //Authentication = auth,
                 PropertiesArray = propertiesArray,
                 ClassName = className,
                 FilterName = filterName

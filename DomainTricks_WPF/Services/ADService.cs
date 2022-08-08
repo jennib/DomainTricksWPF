@@ -23,7 +23,6 @@ public class ADService
         List<ComputerModel> ListOfComputers = new();
 
         DomainService domainService = new(Log.Logger);
-        //string domainPath = "LDAP://DC=tuttistudios,DC=com";
         string filter = ("(&(objectClass=computer)(primaryGroupID=515))");
         string[] propertiesToReturn = { "dNSHostName", "distinguishedName", "operatingSystem", "operatingSystemVersion" };
         SearchResultCollection searchResults;

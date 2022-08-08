@@ -22,7 +22,7 @@ namespace DomainTricks_WPF.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private BackgroundService? backgroundTask;
-    private AuthenticationModel? auth = new();
+    //private AuthenticationModel? auth = new();
 
     // The main list of Computers
     private List<ComputerModel> _computers = new();
@@ -132,7 +132,7 @@ public class MainViewModel : ViewModelBase
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
         // Initialize the authentication model.
-        auth.UpdateFromDisk();
+        //auth.UpdateFromDisk();
         
         RefreshComputers();
 
@@ -180,15 +180,15 @@ public class MainViewModel : ViewModelBase
         Helper.SetMouseCursorToWait();
 
         // Ask user for credentials if not already set.
-        if (auth is null) {
-            if (auth.RunAsLocalUser == false)
-            {
-                if (auth.IsComplete == false)
-                {
-                    OpenPreferences(null);
-                }
-            }
-        }
+        //if (auth is null) {
+        //    if (auth.RunAsLocalUser == false)
+        //    {
+        //        if (auth.IsComplete == false)
+        //        {
+        //            OpenPreferences(null);
+        //        }
+        //    }
+        //}
 
         ProgressBarShouldBeVisible = Visibility.Visible;
         ProgressBarPercent = 50;
@@ -198,7 +198,8 @@ public class MainViewModel : ViewModelBase
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
         StatusBarText = $"Refreshing Computers in {domainPath}...";
         ComputersService computers = new(Log.Logger);
-        List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
+        List<ComputerModel> computersList = await computers.GetComputers(domainPath);
+        //List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
   
         this.Computers.Clear();
         this.Computers.AddRange(computersList);
@@ -219,7 +220,8 @@ public class MainViewModel : ViewModelBase
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
 
         ComputersService computers = new(logger);
-        List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
+        List<ComputerModel> computersList = await computers.GetComputers(domainPath);
+        //List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
         //foreach (ComputerModel computer in computersList)
         //{
         //    Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
@@ -276,7 +278,7 @@ public class MainViewModel : ViewModelBase
 
         MMIService mmiService = new(logger, computerName)
         {
-            Authentication = auth,
+            //Authentication = auth,
             PropertiesArray = PropertiesArray,
             ClassName = ClassName,
             FilterName = FilterName

@@ -24,7 +24,7 @@ public class MMIService
     public List<CimInstance> Instances = new();
 
     // Set Properties.
-    public AuthenticationModel? Authentication { get; set; }
+    //public AuthenticationModel? Authentication { get; set; }
     public string? ClassName { get; set; }
 
     public string[]? PropertiesArray { get; set; }
@@ -46,17 +46,17 @@ public class MMIService
         // Authentication is not supported on the local computer.
         if (ComputerModel.IsLocalComputer(ComputerName) == false)
         {
-            // Check if we should use local user.
-            if (Authentication is not null && Authentication.RunAsLocalUser == false)
-            {
-                // Use DomainName UserName and Password if they exit.
-                if (Authentication.IsComplete)
-                {
-                    // create Credentials.
-                    CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
-                    SessionOptions.AddDestinationCredentials(Credentials);
-                }
-            }
+            //// Check if we should use local user.
+            //if (Authentication is not null && Authentication.RunAsLocalUser == false)
+            //{
+            //    // Use DomainName UserName and Password if they exit.
+            //    if (Authentication.IsComplete)
+            //    {
+            //        // create Credentials.
+            //        CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
+            //        SessionOptions.AddDestinationCredentials(Credentials);
+            //    }
+            //}
         }
         CimSession session = CimSession.Create(ComputerName, SessionOptions);
         bool result = false;
@@ -100,16 +100,16 @@ public class MMIService
         if (ComputerModel.IsLocalComputer(ComputerName) == false)
         {
             // Check if we should use local user.
-            if (Authentication is not null && Authentication.RunAsLocalUser == false)
-            {
-                // Use DomainName UserName and Password if they exit.
-                if (Authentication.IsComplete)
-                {
-                    // create Credentials.
-                    CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
-                    SessionOptions.AddDestinationCredentials(Credentials);
-                }
-            }
+            //if (Authentication is not null && Authentication.RunAsLocalUser == false)
+            //{
+            //    // Use DomainName UserName and Password if they exit.
+            //    if (Authentication.IsComplete)
+            //    {
+            //        // create Credentials.
+            //        CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
+            //        SessionOptions.AddDestinationCredentials(Credentials);
+            //    }
+            //}
         }
 
         // MMI Search Timeout.
@@ -192,8 +192,6 @@ class CimInstanceWatcher : IObserver<CimInstance>
         IsError = true;
         ErrorMessage = e.Message;
         Log.Error("Error: " + e.Message);
-        //CimException cex = e as CimException;
-        //Log.Error("NativeCode: " + cex.ErrorData);
     }
 
     public void OnNext(CimInstance value)

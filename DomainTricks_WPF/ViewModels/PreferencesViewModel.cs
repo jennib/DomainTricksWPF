@@ -13,7 +13,7 @@ namespace DomainTricks_WPF.ViewModels
     public class PreferencesViewModel : ViewModelBase
     {
         private bool _runAsLocalUser = true;
-        private string _domainName = "Domain Name";
+        //private string _domainName = "Domain Name";
         private string _userName = "User Name";
         private string _password = "Password";
         private bool _shouldRememberPassword = true;
@@ -29,15 +29,15 @@ namespace DomainTricks_WPF.ViewModels
                 OnPropertyChanged(nameof(RunAsLocalUser));
             }
         }
-        public string DomainName
-        {
-            get { return _domainName; }
-            set
-            {
-                _domainName = value;
-                OnPropertyChanged(nameof(DomainName));
-            }
-        }
+        //public string DomainName
+        //{
+        //    get { return _domainName; }
+        //    set
+        //    {
+        //        _domainName = value;
+        //        OnPropertyChanged(nameof(DomainName));
+        //    }
+        //}
         public string UserName
         {
             get { return _userName; }
@@ -97,8 +97,8 @@ namespace DomainTricks_WPF.ViewModels
             {
                 return true;
             }
-            if (string.IsNullOrEmpty(DomainName) || string.IsNullOrEmpty(UserName)
-                || string.IsNullOrEmpty(Password))
+            if ( string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
+            //if (string.IsNullOrEmpty(DomainName) || string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
             {
                 return false;
             }
@@ -113,7 +113,7 @@ namespace DomainTricks_WPF.ViewModels
 
             // TODO: Get values from AuthenticationModel
             RunAsLocalUser = Properties.Settings.Default.RunAsLocalUser;
-            DomainName = Properties.Settings.Default.DomainName;
+            //DomainName = Properties.Settings.Default.DomainName;
             UserName = Properties.Settings.Default.UserName;
             Password = Properties.Settings.Default.Password;
             ShouldRememberPassword = Properties.Settings.Default.ShouldRememberPassword;
@@ -126,8 +126,8 @@ namespace DomainTricks_WPF.ViewModels
             Log.Information("Saving Preferences");
             if (RunAsLocalUser == false)
             {
-                if (string.IsNullOrWhiteSpace(DomainName) || string.IsNullOrWhiteSpace(UserName)
-                    || string.IsNullOrWhiteSpace(Password))
+                if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
+                //if (string.IsNullOrWhiteSpace(DomainName) || string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
                 {
                     MessageBox.Show("Please fill in all fields");
                     return;
@@ -138,14 +138,14 @@ namespace DomainTricks_WPF.ViewModels
             Properties.Settings.Default.RunAsLocalUser = RunAsLocalUser;
             if (RunAsLocalUser)
             {
-                Properties.Settings.Default.DomainName = "";
+                //Properties.Settings.Default.DomainName = "";
                 Properties.Settings.Default.UserName = "";
                 Properties.Settings.Default.Password = "";
                 Properties.Settings.Default.ShouldRememberPassword = false;
             }
             else
             {
-                Properties.Settings.Default.DomainName = DomainName;
+                //Properties.Settings.Default.DomainName = DomainName;
                 Properties.Settings.Default.UserName = UserName;
                 if (ShouldRememberPassword)
                 {
