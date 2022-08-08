@@ -178,13 +178,25 @@ public class MainViewModel : ViewModelBase
     {
         Log.Information("RefreshComputers start.");
         Helper.SetMouseCursorToWait();
+
+        // Ask user for credentials if not already set.
+        if (auth is null) {
+            if (auth.RunAsLocalUser == false)
+            {
+                if (auth.IsComplete == false)
+                {
+                    OpenPreferences(null);
+                }
+            }
+        }
+
         ProgressBarShouldBeVisible = Visibility.Visible;
         ProgressBarPercent = 50;
         ProgressBarMaximum = 100;
         StatusBarText = "Refreshing Computers...";
         DomainService domainService = new(Log.Logger);
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
-
+        StatusBarText = $"Refreshing Computers in {domainPath}...";
         ComputersService computers = new(Log.Logger);
         List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
   
@@ -351,20 +363,12 @@ public class MainViewModel : ViewModelBase
 
     void OpenPreferences(object parameter)
     {
-        // TODO make this more MVVMish
         Log.Information($"Open Preferences {parameter}");
-        // Open the preference window for app settings
-
         
         PreferencesViewModel preferencesViewModel = new(Log.Logger);
         PreferencesView preferencesView = new( preferencesViewModel);
-        //preferencesView.DataContext = preferencesViewModel;
-       
         preferencesView.ShowDialog();
     }
-
-  
- 
 
 private void SetupCollectionView()
 {

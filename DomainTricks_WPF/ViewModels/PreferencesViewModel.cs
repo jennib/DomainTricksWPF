@@ -17,6 +17,8 @@ namespace DomainTricks_WPF.ViewModels
         private string _userName = "User Name";
         private string _password = "Password";
         private bool _shouldRememberPassword = true;
+        private string _freeSpaceCriticalPercent;
+        private string _freeSpaceWarningPercent;
 
         public bool RunAsLocalUser
         {
@@ -64,6 +66,25 @@ namespace DomainTricks_WPF.ViewModels
             }
         }
 
+        public string FreeSpaceCriticalPercent
+        {
+            get { return _freeSpaceCriticalPercent; }
+            set
+            {
+                _freeSpaceCriticalPercent = value ;
+                OnPropertyChanged(nameof(FreeSpaceCriticalPercent));
+            }
+        }
+        public string FreeSpaceWarningPercent
+        {
+            get { return _freeSpaceWarningPercent; }
+            set
+            {
+                _freeSpaceWarningPercent = value;
+                OnPropertyChanged(nameof(FreeSpaceWarningPercent));
+            }
+        }
+
         // Action to close the window.   Must be set up in the views codebehind.
         public Action? CloseAction { get; set; }
 
@@ -96,6 +117,8 @@ namespace DomainTricks_WPF.ViewModels
             UserName = Properties.Settings.Default.UserName;
             Password = Properties.Settings.Default.Password;
             ShouldRememberPassword = Properties.Settings.Default.ShouldRememberPassword;
+            FreeSpaceCriticalPercent = Properties.Settings.Default.DiskFreePercentCritical;
+            FreeSpaceWarningPercent = Properties.Settings.Default.DiskFreePercentWarning;
         }
 
         public void SavePreferences(object value)
@@ -130,6 +153,9 @@ namespace DomainTricks_WPF.ViewModels
                 }
                 Properties.Settings.Default.ShouldRememberPassword = ShouldRememberPassword;
             }
+
+            Properties.Settings.Default.DiskFreePercentCritical = FreeSpaceCriticalPercent;
+            Properties.Settings.Default.DiskFreePercentWarning = FreeSpaceWarningPercent;
             Properties.Settings.Default.Save();
 
             // Close the window.
