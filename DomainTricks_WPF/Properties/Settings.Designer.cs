@@ -25,46 +25,10 @@ namespace DomainTricks_WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DomainName {
-            get {
-                return ((string)(this["DomainName"]));
-            }
-            set {
-                this["DomainName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string UserName {
-            get {
-                return ((string)(this["UserName"]));
-            }
-            set {
-                this["UserName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Password {
-            get {
-                return ((string)(this["Password"]));
-            }
-            set {
-                this["Password"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public string DiskFreePercentCritical {
+        public int DiskFreePercentCritical {
             get {
-                return ((string)(this["DiskFreePercentCritical"]));
+                return ((int)(this["DiskFreePercentCritical"]));
             }
             set {
                 this["DiskFreePercentCritical"] = value;
@@ -74,36 +38,12 @@ namespace DomainTricks_WPF.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("20")]
-        public string DiskFreePercentWarning {
+        public int DiskFreePercentWarning {
             get {
-                return ((string)(this["DiskFreePercentWarning"]));
+                return ((int)(this["DiskFreePercentWarning"]));
             }
             set {
                 this["DiskFreePercentWarning"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool ShouldRememberPassword {
-            get {
-                return ((bool)(this["ShouldRememberPassword"]));
-            }
-            set {
-                this["ShouldRememberPassword"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool RunAsLocalUser {
-            get {
-                return ((bool)(this["RunAsLocalUser"]));
-            }
-            set {
-                this["RunAsLocalUser"] = value;
             }
         }
     }

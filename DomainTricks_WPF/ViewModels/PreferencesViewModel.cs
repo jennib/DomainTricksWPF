@@ -12,59 +12,8 @@ namespace DomainTricks_WPF.ViewModels
 {
     public class PreferencesViewModel : ViewModelBase
     {
-        private bool _runAsLocalUser = true;
-        //private string _domainName = "Domain Name";
-        private string _userName = "User Name";
-        private string _password = "Password";
-        private bool _shouldRememberPassword = true;
         private string _freeSpaceCriticalPercent;
         private string _freeSpaceWarningPercent;
-
-        public bool RunAsLocalUser
-        {
-            get { return _runAsLocalUser; }
-            set
-            {
-                _runAsLocalUser = value;
-                OnPropertyChanged(nameof(RunAsLocalUser));
-            }
-        }
-        //public string DomainName
-        //{
-        //    get { return _domainName; }
-        //    set
-        //    {
-        //        _domainName = value;
-        //        OnPropertyChanged(nameof(DomainName));
-        //    }
-        //}
-        public string UserName
-        {
-            get { return _userName; }
-            set
-            {
-                _userName = value;
-                OnPropertyChanged(nameof(UserName));
-            }
-        }
-        public string Password
-        {
-            get { return _password; }
-            set
-            {
-                _password = value;
-                OnPropertyChanged(nameof(Password));
-            }
-        }
-        public bool ShouldRememberPassword
-        {
-            get { return _shouldRememberPassword; }
-            set
-            {
-                _shouldRememberPassword = value;
-                OnPropertyChanged(nameof(ShouldRememberPassword));
-            }
-        }
 
         public string FreeSpaceCriticalPercent
         {
@@ -93,18 +42,14 @@ namespace DomainTricks_WPF.ViewModels
         // Should the Save button be enabled.
         public bool CanSave(object value)
         {
-            if (RunAsLocalUser)
+       // Check that strings that should contain numbers, do.
+            if (int.TryParse(FreeSpaceCriticalPercent, out _) && int.TryParse(FreeSpaceWarningPercent, out _))
             {
                 return true;
             }
-            if ( string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
-            //if (string.IsNullOrEmpty(DomainName) || string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Password))
-            {
-                return false;
-            }
-            return true;
+            return false;
         }
-
+        
         public PreferencesViewModel(ILogger logger)
         {
             Log.Logger = logger;
@@ -112,50 +57,22 @@ namespace DomainTricks_WPF.ViewModels
             SavePreferencesCommand = new RelayCommand(SavePreferences, CanSave);
 
             // TODO: Get values from AuthenticationModel
-            RunAsLocalUser = Properties.Settings.Default.RunAsLocalUser;
-            //DomainName = Properties.Settings.Default.DomainName;
-            UserName = Properties.Settings.Default.UserName;
-            Password = Properties.Settings.Default.Password;
-            ShouldRememberPassword = Properties.Settings.Default.ShouldRememberPassword;
-            FreeSpaceCriticalPercent = Properties.Settings.Default.DiskFreePercentCritical;
-            FreeSpaceWarningPercent = Properties.Settings.Default.DiskFreePercentWarning;
+          
+            FreeSpaceCriticalPercent = Properties.Settings.Default.DiskFreePercentCritical.ToString();
+            FreeSpaceWarningPercent = Properties.Settings.Default.DiskFreePercentWarning.ToString();
         }
 
         public void SavePreferences(object value)
         {
-            Log.Information("Saving Preferences");
-            if (RunAsLocalUser == false)
-            {
-                if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
-                //if (string.IsNullOrWhiteSpace(DomainName) || string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(Password))
-                {
-                    MessageBox.Show("Please fill in all fields");
-                    return;
-                }
-            }
-
             // Save values to settings on disk.
-            Properties.Settings.Default.RunAsLocalUser = RunAsLocalUser;
-            if (RunAsLocalUser)
-            {
-                //Properties.Settings.Default.DomainName = "";
-                Properties.Settings.Default.UserName = "";
-                Properties.Settings.Default.Password = "";
-                Properties.Settings.Default.ShouldRememberPassword = false;
+            int FreeSpaceCritical;
+            int FreeSpaceWarning;
+            if ( int.TryParse(FreeSpaceCriticalPercent, out FreeSpaceCritical) {
+                Properties.Settings.Default.DiskFreePercentCritical = FreeSpaceCritical;
             }
-            else
-            {
-                //Properties.Settings.Default.DomainName = DomainName;
-                Properties.Settings.Default.UserName = UserName;
-                if (ShouldRememberPassword)
-                {
-                    Properties.Settings.Default.Password = Password;
-                }
-                Properties.Settings.Default.ShouldRememberPassword = ShouldRememberPassword;
+            if ( int.TryParse(FreeSpaceWarningPercent, out FreeSpaceWarning){
+                Properties.Settings.Default.DiskFreePercentWarning = FreeSpaceWarning;
             }
-
-            Properties.Settings.Default.DiskFreePercentCritical = FreeSpaceCriticalPercent;
-            Properties.Settings.Default.DiskFreePercentWarning = FreeSpaceWarningPercent;
             Properties.Settings.Default.Save();
 
             // Close the window.

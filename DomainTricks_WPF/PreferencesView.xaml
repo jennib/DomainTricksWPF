@@ -24,26 +24,8 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Label Content="Run as Logged in user"    Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2" />
-        <Label Content="Domain"    Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2" />
-        <Label Content="User name"   Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
-        <Label Content="Password"    Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
-        <Label Content="Remember  Password"    Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
+        
         <Label Content="Highlight Free Disk Space"    Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
-
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="0">
-            <CheckBox x:Name="RunLocalUserCheckBox" IsChecked="{Binding RunAsLocalUser}"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
-            <Label x:Name="RunAsLoggedInUserLabel"  Content="Use the credentials of the user that ran this program." HorizontalAlignment="Left" Margin="2" VerticalAlignment="Center" FontSize="8"/>
-        </StackPanel>
-        <TextBlock Text="{Binding  DomainName, UpdateSourceTrigger=PropertyChanged}" 
-                 Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" 
-                 Margin="2" Width="250"/>
-        <TextBox Text="{Binding  UserName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
-        <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4" >
-            <CheckBox IsChecked="{Binding ShouldRememberPassword}"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
-            <Label Content="Remembered password will be saved to disk encrypted.  May be unsafe." FontSize="8 " HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
-        </StackPanel>
         
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" HorizontalAlignment="Center">
             <TextBlock Text="Critical %"  VerticalAlignment="Center" Margin="2"/>
