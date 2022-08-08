@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DomainTricks_WPF"
          xmlns:vm="clr-namespace:DomainTricks_WPF.ViewModels"
+        xmlns:converters="clr-namespace:DomainTricks_WPF.Converters"
         d:DataContext="{d:DesignInstance Type=vm:PreferencesViewModel}"
         mc:Ignorable="d"
         Title="Domain Tricks  Preferences" Height="250" Width="500" SizeToContent="Height" Topmost="True" WindowStartupLocation="CenterOwner">
+    
+    
     <Grid Margin="2" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"  />
@@ -27,9 +30,11 @@
         <Label Content="Password"    Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
         <Label Content="Remember  Password"    Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2"/>
 
-        <CheckBox IsChecked="{Binding RunAsLocalUser}" Grid.Column="1" Grid.Row="0 "  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
+        <CheckBox x:Name="RunLocalUserCheckBox" IsChecked="{Binding RunAsLocalUser}" Grid.Column="1" Grid.Row="0 "  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2"/>
 
-        <TextBox Text="{Binding  DomainName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
+        <TextBox Text="{Binding  DomainName, UpdateSourceTrigger=PropertyChanged}" 
+                 Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                 Margin="2" Width="250"/>
         <TextBox Text="{Binding  UserName, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
         <TextBox Text="{Binding Password, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2" Width="250"/>
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="4" >

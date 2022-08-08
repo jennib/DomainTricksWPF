@@ -9,14 +9,21 @@ namespace DomainTricks_WPF.Models;
 
 public class AuthenticationModel
 {
-    public AuthenticationModel(string? domainName, string? userName, string? password,bool runAsLocalUser)
+
+    // Singleton Pattern
+    private static readonly Lazy<AuthenticationModel> lazy =
+        new Lazy<AuthenticationModel>(() => new AuthenticationModel());
+    public static AuthenticationModel Instance { get { return lazy.Value; } }
+
+
+    public AuthenticationModel(string? domainName, string? userName, string? password, bool runAsLocalUser)
     {
         DomainName = domainName;
         UserName = userName;
         Password = password;
         RunAsLocalUser = runAsLocalUser;
     }
-    
+
     public AuthenticationModel()
     {
 

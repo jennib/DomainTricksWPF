@@ -22,6 +22,7 @@ namespace DomainTricks_WPF.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private BackgroundService? backgroundTask;
+    private AuthenticationModel? auth = new();
 
     // The main list of Computers
     private List<ComputerModel> _computers = new();
@@ -120,6 +121,7 @@ public class MainViewModel : ViewModelBase
 
     }
 
+    
     public MenuClickedCommand MenuClickedCommand { get; set; }
 
     public MainViewModel(ILogger logger)
@@ -129,6 +131,9 @@ public class MainViewModel : ViewModelBase
 
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
+        // Initialize the authentication model.
+        auth.UpdateFromDisk();
+        
         RefreshComputers();
 
         backgroundTask = new BackgroundService(logger, this);
@@ -166,7 +171,7 @@ public class MainViewModel : ViewModelBase
         //Log.Information("Test the MMIService.");
         //TestMMI(logger, computer);
 
-
+        
     }
 
     public async Task RefreshComputers()
@@ -181,11 +186,8 @@ public class MainViewModel : ViewModelBase
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
 
         ComputersService computers = new(Log.Logger);
-        List<ComputerModel> computersList = await computers.GetComputers(domainPath);
-        //foreach (ComputerModel computer in computersList)
-        //{
-        //    Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
-        //}
+        List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
+  
         this.Computers.Clear();
         this.Computers.AddRange(computersList);
         //Computers = computersList;
@@ -205,7 +207,7 @@ public class MainViewModel : ViewModelBase
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
 
         ComputersService computers = new(logger);
-        List<ComputerModel> computersList = await computers.GetComputers(domainPath);
+        List<ComputerModel> computersList = await computers.GetComputers(domainPath,auth);
         //foreach (ComputerModel computer in computersList)
         //{
         //    Log.Information($"Computer: {computer.Name}: {computer.InstancesDictionary.Count} instances.  Last seen {computer.DateLastSeen?.ToString("f")}");
@@ -316,7 +318,7 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    public void MenuClickedCommandAction(string? parameter)
+    public async void MenuClickedCommandAction(string? parameter)
     {
         Log.Information($"MenuClickedCommandAction {parameter}");
         switch (parameter)
@@ -334,8 +336,9 @@ public class MainViewModel : ViewModelBase
             case "Help":
                 Log.Information("Help");
                 break;
-            case "Run":
-                Log.Information("Run");
+            case "RunJob":
+                Log.Information("RunJob");
+                await RefreshComputers();
                 break;
             case "PauseProcessing":
                 Log.Information("PauseProcessing");

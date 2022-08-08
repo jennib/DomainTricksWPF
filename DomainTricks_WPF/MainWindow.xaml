@@ -9,42 +9,43 @@
         mc:Ignorable="d"
         Loaded="OnLoaded"
         Title="{Binding Title}" Height="450" Width="800">
-    
-    
-    
+
+
+
     <DockPanel>
 
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_New" />
+                <!-- <MenuItem Header="_New" />
                 <MenuItem Header="_Open" />
-                <MenuItem Header="_Save" />
+                <MenuItem Header="_Save" /> -->
                 <Separator />
-                <MenuItem Header="E_xit" Name="Exit"  
+                <MenuItem Header="E_xit" Name="ExitMenu"  
                           Command="{Binding MenuClickedCommand}" 
                           CommandParameter="Exit"
                           InputGestureText="Alt+F4"/>
             </MenuItem>
             <MenuItem Header="_Run">
-                <MenuItem Header="Run _Job"  Command="{Binding MenuClickedCommand}" 
-                          CommandParameter="Run"/>
-                <MenuItem Header="Paused" IsCheckable="True" IsChecked="{Binding IsPaused}" 
+                <MenuItem Header="Run _Job" Name="RunJobMenu"
+                          Command="{Binding MenuClickedCommand}"
+                          CommandParameter="RunJob" />
+                <MenuItem Header="Paused" Name="pauseMenu"
+                          IsCheckable="True" IsChecked="{Binding IsPaused}" 
                            Command="{Binding MenuClickedCommand}" 
-                          CommandParameter="PauseProcessing" 
-                          Name="pauseMenu"/>
+                          CommandParameter="PauseProcessing" />
             </MenuItem>
             <MenuItem Header="_Tools">
-                <MenuItem Header="_Preferences" 
+                <MenuItem Header="_Preferences" Name="ToolsMenu"
                            Command="{Binding MenuClickedCommand}" 
                           CommandParameter="Preferences" />
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="_View Help" Name="Help" 
+                <MenuItem Header="_View Help" Name="HelpMenu" 
                           Command="{Binding MenuClickedCommand}" 
                           CommandParameter="Help"
                           InputGestureText="CTR+F1"/>
                 <Separator />
-                <MenuItem Header="_About" Name="About"  
+                <MenuItem Header="_About" Name="AboutMenu"  
                           Command="{Binding MenuClickedCommand}" 
                           CommandParameter="About"/>
             </MenuItem>
@@ -96,7 +97,7 @@
         </StatusBar>
         <Grid>
             <ScrollViewer>
-                
+
                 <!-- List of Computers -->
                 <ItemsControl ItemsSource="{Binding ComputerCollectionView}" Name="ComputerItemControl">
                     <!-- Computer -->
@@ -108,14 +109,14 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate >
                             <!--<TextBox Text="{Binding Name}"/>-->
-                            <local:ComputerView  DataContext="{Binding}" /> 
-                            
+                            <local:ComputerView  DataContext="{Binding}" />
+
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     <!-- Computer -->
                 </ItemsControl>
                 <!-- List of Computers -->
-                
+
             </ScrollViewer>
         </Grid>
     </DockPanel>

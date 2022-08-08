@@ -42,16 +42,23 @@ public class MMIService
 
     public async Task<bool> TestConnection()
     {
-        CimSessionOptions sessionOptions = new() { Timeout = TimeSpan.FromSeconds(1) };
-        // Use UserName and Password if they exit.
-        //if (Authentication is not null && Authentication?.UserName is not null && Authentication?.Password is not null)
-        if (Authentication is not null && Authentication.IsComplete)
+        CimSessionOptions SessionOptions = new() { Timeout = TimeSpan.FromSeconds(1) };
+        // Authentication is not supported on the local computer.
+        if (ComputerModel.IsLocalComputer(ComputerName) == false)
         {
-            // create Credentials.
-            CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
-            sessionOptions.AddDestinationCredentials(Credentials);
+            // Check if we should use local user.
+            if (Authentication is not null && Authentication.RunAsLocalUser == false)
+            {
+                // Use DomainName UserName and Password if they exit.
+                if (Authentication.IsComplete)
+                {
+                    // create Credentials.
+                    CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
+                    SessionOptions.AddDestinationCredentials(Credentials);
+                }
+            }
         }
-        CimSession session = CimSession.Create(ComputerName, sessionOptions);
+        CimSession session = CimSession.Create(ComputerName, SessionOptions);
         bool result = false;
         try
         {
@@ -92,13 +99,16 @@ public class MMIService
         // Authentication is not supported on the local computer.
         if (ComputerModel.IsLocalComputer(ComputerName) == false)
         {
-            // Use UserName and Password if they exit.
-            // if (Authentication is not null && !string.IsNullOrEmpty( Authentication?.UserName) && !string.IsNullOrEmpty( Authentication?.Password) && !string.IsNullOrEmpty(Authentication?.DomainName))
-            if (Authentication is not null && Authentication.IsComplete)
+            // Check if we should use local user.
+            if (Authentication is not null && Authentication.RunAsLocalUser == false)
             {
-                // create Credentials.
-                CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
-                SessionOptions.AddDestinationCredentials(Credentials);
+                // Use DomainName UserName and Password if they exit.
+                if (Authentication.IsComplete)
+                {
+                    // create Credentials.
+                    CimCredential Credentials = new(PasswordAuthenticationMechanism.Default, Authentication.DomainName, Authentication.UserName, Authentication.SecurePassword);
+                    SessionOptions.AddDestinationCredentials(Credentials);
+                }
             }
         }
 

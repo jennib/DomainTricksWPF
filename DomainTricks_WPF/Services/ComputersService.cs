@@ -18,14 +18,15 @@ namespace DomainTricks_WPF.Services
             Log.Logger = logger;
         }
 
-        public async Task<List<ComputerModel>> GetComputers(string domainPath)
+        public async Task<List<ComputerModel>> GetComputers(string domainPath,AuthenticationModel? auth)
         {
             List<ComputerModel> computers = new();
             
             // Setup the authentication credentials
            // AuthenticationModel auth = new("", "", "",true);
-           AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password",false);
-
+           //AuthenticationModel auth = new("tuttistudios.com", "jennifer", "password",false);
+           
+            
             // Get a list of Computers from the Directory.
             ADService adService = new ADService(Log.Logger);
             computers = await adService.GetListOfComputersFromADAsync(domainPath);
