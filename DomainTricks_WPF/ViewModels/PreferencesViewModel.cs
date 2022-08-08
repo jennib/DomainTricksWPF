@@ -56,8 +56,6 @@ namespace DomainTricks_WPF.ViewModels
             // Load from settings on disk.
             SavePreferencesCommand = new RelayCommand(SavePreferences, CanSave);
 
-            // TODO: Get values from AuthenticationModel
-          
             FreeSpaceCriticalPercent = Properties.Settings.Default.DiskFreePercentCritical.ToString();
             FreeSpaceWarningPercent = Properties.Settings.Default.DiskFreePercentWarning.ToString();
         }
