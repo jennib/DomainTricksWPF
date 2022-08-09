@@ -48,15 +48,17 @@ public class DriveModel
     {
         get
         {
-            if (PercentFreeSpace <= 10)
+            int percentCritical = Properties.Settings.Default.DiskFreePercentCritical;
+            int percentWarning = Properties.Settings.Default.DiskFreePercentWarning;
+            switch (PercentFreeSpace)
             {
-                return "LightCoral";
-            }
-            else
-            {
-                return "White";
+                case double d when d < percentCritical:
+                    return "LightCoral";
+                case double d when d < percentWarning:
+                    return "LemonChiffon";
+                default:
+                    return "white";
             }
         }
-
     }
 }

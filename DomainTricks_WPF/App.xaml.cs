@@ -25,7 +25,7 @@ public partial class App : Application
     {
         // Set up Serilog
         Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Verbose()
                 .WriteTo.Debug()
                 .WriteTo.File("logs/DomainTricks_Log.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();

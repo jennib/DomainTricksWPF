@@ -21,11 +21,11 @@ public class BackgroundService
     private CancellationTokenSource _tokenSource = new();
     private MainViewModel _mainViewModel;
     private bool? _isRunning = false;
+    private TimeSpan _timerInterval;
     public bool? IsRunning
     {
         get { return _isRunning; }
     }
-
 
     public BackgroundService(ILogger logger, MainViewModel mainViewModel)
     {
@@ -36,6 +36,7 @@ public class BackgroundService
 
     public void Start(TimeSpan interval)
     {
+        _timerInterval = interval;
         _timer = new(interval);
         _timerTask = DoWorkAsync();
     }

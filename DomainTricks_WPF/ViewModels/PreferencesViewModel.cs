@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows;
+using DomainTricks_WPF.Services;
 
 namespace DomainTricks_WPF.ViewModels
 {
@@ -15,6 +16,7 @@ namespace DomainTricks_WPF.ViewModels
         private string _freeSpaceCriticalPercent;
         private string _freeSpaceWarningPercent;
         private string _timerMinutes;
+        private MainViewModel _mainViewModel;
 
         public string FreeSpaceCriticalPercent
         {
@@ -61,9 +63,10 @@ namespace DomainTricks_WPF.ViewModels
             return false;
         }
         
-        public PreferencesViewModel(ILogger logger)
+        public PreferencesViewModel(ILogger logger, MainViewModel mainViewModel)
         {
             Log.Logger = logger;
+            _mainViewModel = mainViewModel;
             // Load from settings on disk.
             SavePreferencesCommand = new RelayCommand(SavePreferences, CanSave);
             TimerMinutes = Properties.Settings.Default.TimerMinutes.ToString();
@@ -88,6 +91,10 @@ namespace DomainTricks_WPF.ViewModels
                 Properties.Settings.Default.TimerMinutes = timerMinutes;
             }
             Properties.Settings.Default.Save();
+
+
+            // Change the timerSpan in BackgrounService
+            _mainViewModel.TimerInterval = timerMinutes.ToString();
 
             // Close the window.
             CloseAction?.Invoke();

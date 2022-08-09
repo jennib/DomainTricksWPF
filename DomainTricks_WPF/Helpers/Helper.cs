@@ -10,6 +10,17 @@ namespace DomainTricks_WPF.Helpers;
 
 public class Helper
 {
+    
+    public static bool IsUpper(string s)
+    {
+        return s.All(char.IsUpper);
+    }public static bool IsNumbers(string s)
+    {
+        return s.All(char.IsNumber);
+    }public static bool IsLetter(string s)
+    {
+        return s.All(char.IsLetter);
+    }
     public static string FormatBytes(ulong bytes)
     {
         if (bytes < 0) return string.Empty;

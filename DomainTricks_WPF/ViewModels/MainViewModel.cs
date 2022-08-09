@@ -21,10 +21,19 @@ namespace DomainTricks_WPF.ViewModels;
 
 public class MainViewModel : ViewModelBase
 {
-    private BackgroundService? backgroundTask;
+    private BackgroundService? _backgroundService;
+    private string? _title = "Domain Tricks";
+    private string? _statusBarText = string.Empty;
+    private Visibility _progressBarShouldBeVisible = Visibility.Hidden;
+    private int _progressBarMaximum = 100;
+    private int _progressBarPercent = 0;
+    private string? _filterString = String.Empty;
+    private ICollectionView? _computerCollectionView = null;
+    private TimeSpan _timerInterval;
 
     // The main list of Computers
     private List<ComputerModel> _computers = new();
+
     public List<ComputerModel> Computers
     {
         get { return _computers; }
@@ -35,7 +44,6 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private string? _title = "Domain Tricks";
     public string? Title
     {
         get { return _title; }
@@ -47,7 +55,6 @@ public class MainViewModel : ViewModelBase
     }
     public bool IsPaused { get; set; }
 
-    private string? _statusBarText = string.Empty;
     public string? StatusBarText
     {
         get { return _statusBarText; }
@@ -58,7 +65,6 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private Visibility _progressBarShouldBeVisible = Visibility.Hidden;
     public Visibility ProgressBarShouldBeVisible
     {
         get { return _progressBarShouldBeVisible; }
@@ -69,7 +75,6 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private int _progressBarMaximum = 100;
     public int ProgressBarMaximum
     {
         get { return _progressBarMaximum; }
@@ -80,7 +85,6 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private int _progressBarPercent = 0;
     public int ProgressBarPercent
     {
         get { return _progressBarPercent; }
@@ -91,7 +95,6 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    private string? _filterString = String.Empty;
     public string? FilterString
     {
         get { return _filterString; }
@@ -105,9 +108,22 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged(nameof(FilterString));
         }
     }
+    
+    public  string? TimerInterval {
+        get { return _timerInterval.Minutes.ToString(); }
+        set
+        {
+            if (int.TryParse(value, out var interval))
+            {
+                _timerInterval = TimeSpan.FromMinutes(interval);
+                 _backgroundService.StopAsync();
+                _backgroundService?.Start(TimeSpan.FromMinutes(interval));
+            }
+            OnPropertyChanged(nameof(TimerInterval));
+        }
+    }
 
     // For filtering and sorting of computers.
-    private ICollectionView? _computerCollectionView = null;
     public ICollectionView? ComputerCollectionView
     {
         get { return _computerCollectionView; }
@@ -128,11 +144,15 @@ public class MainViewModel : ViewModelBase
 
         this.MenuClickedCommand = new MenuClickedCommand(logger, this);
 
+        // Read the refresh timer value in minutes from settings.
+        int timerMinutes = Properties.Settings.Default.TimerMinutes;
+        if (timerMinutes <= 0) timerMinutes = 10;
+        
         RefreshComputers();
 
-        backgroundTask = new BackgroundService(logger, this);
+        _backgroundService = new BackgroundService(logger, this);
 
-        backgroundTask.Start(TimeSpan.FromMinutes(15));
+        TimerInterval = timerMinutes.ToString();
 
         //ComputerModel StartComputer = new("Loading", logger);
         //List<ComputerModel> StartComputerList = new() {
@@ -175,6 +195,7 @@ public class MainViewModel : ViewModelBase
         ProgressBarPercent = 50;
         ProgressBarMaximum = 100;
         StatusBarText = "Refreshing Computers...";
+        
         DomainService domainService = new(Log.Logger);
         string domainPath = await DomainService.GetCurrentDomainPathAsync();
         StatusBarText = $"Refreshing Computers in {domainPath}...";
@@ -340,11 +361,11 @@ public class MainViewModel : ViewModelBase
         }
     }
 
-    void OpenPreferences(object parameter)
+      void OpenPreferences(object parameter)
     {
         Log.Information($"Open Preferences {parameter}");
 
-        PreferencesViewModel preferencesViewModel = new(Log.Logger);
+        PreferencesViewModel preferencesViewModel = new(Log.Logger,this);
         PreferencesView preferencesView = new(preferencesViewModel);
         preferencesView.ShowDialog();
     }
