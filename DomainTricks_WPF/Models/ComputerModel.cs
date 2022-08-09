@@ -61,7 +61,23 @@ public class ComputerModel : ModelBase
             return "";
         }
     }
-
+    public string? ManufacturerModelString
+    {
+        get
+        {
+            if (InstancesDictionary.ContainsKey("Win32_ComputerSystem"))
+            {
+                List<CimInstance>? instances = InstancesDictionary["Win32_ComputerSystem"];
+                if (instances.Count > 0)
+                {
+                    string manufacturer = instances[0].CimInstanceProperties["Manufacturer"].Value.ToString();
+                    string model = instances[0].CimInstanceProperties["Model"].Value.ToString();
+                    return manufacturer + " " + model;
+                }
+            }
+            return "";
+        }
+    }
 
 
     // checks if this ComputerModel points to the computer it is running on

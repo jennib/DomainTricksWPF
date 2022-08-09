@@ -367,6 +367,7 @@ public class MainViewModel : ViewModelBase
 
         PreferencesViewModel preferencesViewModel = new(Log.Logger,this);
         PreferencesView preferencesView = new(preferencesViewModel);
+        preferencesView.Owner = Application.Current.MainWindow;
         preferencesView.ShowDialog();
     }
 
