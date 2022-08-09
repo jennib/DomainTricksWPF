@@ -13,6 +13,7 @@
         <Border BorderThickness="1" BorderBrush="Gray" Margin="1" Padding="4,0,4,0">
             <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True"  >
                 <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="Bold" />
+                <TextBlock Text="{Binding UserName}" FontSize="10" FontWeight="SemiBold" />
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{Binding OperatingSystem}" FontSize="8"  Margin="0,0,1 ,0"/>
                     <TextBlock Text="{Binding OperatingSystemVersion}" FontSize="8"/>

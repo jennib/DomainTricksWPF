@@ -46,6 +46,22 @@ public class ComputerModel : ModelBase
     public string? OperatingSystemVersion { get; set; }
     public string? DNSHostName { get; set; }
 
+    public string? UserName
+    {
+        get
+        {
+            if (InstancesDictionary.ContainsKey("Win32_ComputerSystem"))
+            {
+                List<CimInstance>? instances = InstancesDictionary["Win32_ComputerSystem"];
+                if (instances.Count > 0)
+                {
+                    return instances[0].CimInstanceProperties["UserName"].Value.ToString();
+                }
+            }
+            return "";
+        }
+    }
+
 
 
     // checks if this ComputerModel points to the computer it is running on
@@ -58,7 +74,7 @@ public class ComputerModel : ModelBase
     // Key should be the class name used to generate the CimInstance List.
     public Dictionary<string, List<CimInstance>> InstancesDictionary { get; set; } = new();
 
-    private List<DriveModel> _listOfWin32_LogicalDisk = new ();
+    private List<DriveModel> _listOfWin32_LogicalDisk = new();
     public List<DriveModel> ListOfWin32_LogicalDisk
     {
         get { return _listOfWin32_LogicalDisk; }
